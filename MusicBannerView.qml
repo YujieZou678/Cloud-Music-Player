@@ -1,0 +1,391 @@
+//MusicBannerView.qml
+
+import QtQuick
+import QtQuick.Controls
+import QtQml
+
+/*
+ * Version Two: PathView动效版*/
+Frame {
+    property int current: 0
+    property var bannerList: []
+
+    background: Rectangle {
+        color: "#00000000"
+    }
+
+    PathView {
+        id: pathView
+        width: parent.width
+        height: parent.height
+        model: bannerList
+        //超出部分隐藏
+        clip: true
+        delegate: MusicRoundImage {
+            id: musicImage
+            width: pathView.width*0.7
+            height: pathView.height
+            z: PathView.z ? PathView.z : 0
+            scale: PathView.scale ? PathView.scale : 1
+            imgSrc: modelData.imageUrl
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    if (pathView.currentIndex == index) {
+                        var item = pathView.model[index]
+                        var targetId = item.targetId+""
+                        var targetType = item.targetType+""
+                        console.log(targetId, targetType, " 正在点击banner")
+
+                        switch(targetType) {
+                        case "1":
+                            //播放单曲
+                            playMusic(index)
+                            break;
+                        case "10":
+                            //打开专辑
+                            pageHomeView.showPlayList(targetId, targetType)
+                            break;
+                        case "1000":
+                            //打开歌单列表
+                            pageHomeView.showPlayList(targetId, targetType)
+                            break;
+                        }
+
+                    } else pathView.currentIndex = index
+                }
+                hoverEnabled: true
+                onEntered: { timer.stop() }
+                onExited: { timer.start() }
+            }
+        }
+
+        //该视图可见组件个数
+        pathItemCount: 3
+        path: path;
+
+        //currentItem的highlight范围,让当前组件位于中间路线
+        preferredHighlightBegin: 0.5
+        preferredHighlightEnd: 0.5
+    }
+    Path {
+        id: path
+        //x,y对应组件的中心
+        startX: 0
+        startY: pathView.height/2-10
+        //路径属性，是一一对应关系
+        PathAttribute { name: "z"; value: 0 }
+        //坐标不会随缩放而改变，从而有坐标偏差
+        PathAttribute { name: "scale"; value: 0.6 }
+
+        //中间路线，此时只是存在该路线(会路过它)，但是组件并不是默认位于该路线
+        PathLine {
+            x: pathView.width/2
+            y: pathView.height/2-10
+        }
+        PathAttribute { name: "z"; value: 2 }
+        PathAttribute { name: "scale"; value: 0.85 }
+
+        PathLine {
+            x: pathView.width
+            y: pathView.height/2-10
+        }
+        PathAttribute { name: "z"; value: 0 }
+        PathAttribute { name: "scale"; value: 0.6 }
+    }
+
+    //轮播图下方索引
+    PageIndicator {
+        id: pageIndicator
+        count: bannerList.length
+        anchors {
+            top: pathView.bottom
+            horizontalCenter: parent.horizontalCenter
+            topMargin: -15
+        }
+        currentIndex: pathView.currentIndex
+        delegate: Rectangle {
+            width: 20; height: 5
+            radius: 5
+            color: pageIndicator.currentIndex===index ? "black" : "gray"
+            Behavior on color {
+                ColorAnimation {
+                    duration: 200
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: {
+                    pathView.currentIndex = index
+                    timer.stop()
+                }
+                onExited: {
+                    timer.start()
+                }
+                cursorShape: Qt.PointingHandCursor
+            }
+        }
+    }  //end PageIndicator
+
+    //设置轮播时间
+    Timer {
+        id: timer
+        interval: 3000
+        repeat: true
+        onTriggered: {
+            if (bannerList.length > 0)
+                //pathView.count是model的个数
+                pathView.currentIndex = (pathView.currentIndex + 1) % pathView.count
+        }
+        running: true
+    }
+
+    //点击执行
+    function playMusic(index) {
+        if (bannerList.length<1) return
+        var id = bannerList[index].targetId
+        console.log("id: "+id+" 正在播放音乐")
+        var url = "/song/url?id="+id
+
+        postRequest(url, dataHandle)
+
+        layoutBottomView.nameText = bannerList[index].typeTitle
+        layoutBottomView.timeText = getTime(window.mediaPlayer.position/1000)+"/"+getTime(window.mediaPlayer.duration/1000)
+    }
+
+    function dataHandle(_data) {
+        var data = JSON.parse(_data).data
+        //赋值,播放音乐
+        mediaPlayer.source = data[0].url
+        layoutBottomView.playStateSource = "qrc:/images/pause.png"
+        mediaPlayer.play()
+    }
+
+    //网络请求模板函数
+    function postRequest(url="", handleData) {
+        //得到一个空闲的manager
+        var manager = getFreeManager()
+
+        function onReply(data) {
+            //得到数据立马断开连接,重置状态
+            switch(manager) {
+            case 0:
+                onReplySignal1.disconnect(onReply)
+                reSetStatus(manager)
+                break;
+            case 1:
+                onReplySignal2.disconnect(onReply)
+                reSetStatus(manager)
+                break;
+            case 2:
+                onReplySignal3.disconnect(onReply)
+                reSetStatus(manager)
+                break;
+            }
+            //如果传递的数据为空，则判断网络请求失败
+            if (data==="") {
+                console.log("Error: no data!")
+                return;
+            }
+            //处理数据
+            handleData(data)
+        }
+        switch(manager) {
+        case 0:
+            onReplySignal1.connect(onReply)
+            break;
+        case 1:
+            onReplySignal2.connect(onReply)
+            break;
+        case 2:
+            onReplySignal3.connect(onReply)
+            break;
+        }
+
+        //请求数据
+        getData(url, manager)
+    }
+}
+
+
+  /*
+   * Version one: 简易版，固定图片位置，改变Url*/
+//Frame {
+//    property int current: 0
+//    property var songList: []
+
+//    background: Rectangle {
+//        color: "#00000000"
+//    }
+
+//    MouseArea {
+//        anchors.fill: parent
+//        cursorShape: Qt.PointingHandCursor
+//        hoverEnabled: true
+//        onEntered: {
+//            timer.stop()
+//        }
+//        onExited: {
+//            timer.start()
+//        }
+//    }
+
+//    //左方图片
+//    MusicRoundImage {
+//        id: leftImage
+//        width: parent.width*0.6
+//        height: parent.height*0.8
+//        anchors {
+//            left: parent.left
+//            bottom: parent.bottom
+//            bottomMargin: 20
+//        }
+
+//        imgSrc: getLeftImgSrc()
+
+//        MouseArea {
+//            anchors.fill: parent
+//            onClicked: {
+//                if (songList.length > 0)
+//                    current = current==0 ? songList.length-1 : current-1
+//             }
+//            cursorShape: Qt.PointingHandCursor
+//        }
+
+//        onImgSrcChanged: {
+//            leftImageAnimation.start()
+//        }
+
+//        NumberAnimation {
+//            id: leftImageAnimation
+//            target: leftImage
+//            property: "scale"
+//            from: 0.7
+//            to: 1.0
+//            duration: 200
+//        }
+//    }
+
+//    //中间图片
+//    MusicRoundImage {
+//        id: centerImage
+//        width: parent.width*0.6
+//        height: parent.height
+//        z: 2
+//        anchors.centerIn: parent
+//        imgSrc: getCenterImgSrc()
+
+//        MouseArea {
+//            anchors.fill: parent
+//            cursorShape: Qt.PointingHandCursor
+//        }
+
+//        onImgSrcChanged: {
+//            centerImageAnimation.start()
+//        }
+//        NumberAnimation {
+//            id: centerImageAnimation
+//            target: centerImage
+//            property: "scale"
+//            from: 0.7
+//            to: 1.0
+//            duration: 200
+//        }
+//    }
+
+//    //右方图片
+//    MusicRoundImage {
+//        id: rightImage
+//        width: parent.width*0.6
+//        height: parent.height*0.8
+//        anchors {
+//            right: parent.right
+//            bottom: parent.bottom
+//            bottomMargin: 20
+//        }
+
+//        imgSrc: getRightImgSrc()
+
+//        MouseArea {
+//            anchors.fill: parent
+//            onClicked: {
+//                if (songList.length > 0)
+//                    current = current==songList.length-1 ? 0 : current+1
+//             }
+//            cursorShape: Qt.PointingHandCursor
+//        }
+
+//        onImgSrcChanged: {
+//            rightImageAnimation.start()
+//        }
+//        NumberAnimation {
+//            id: rightImageAnimation
+//            target: rightImage
+//            property: "scale"
+//            from: 0.7
+//            to: 1.0
+//            duration: 200
+//        }
+//    }
+
+//    //轮播图下方的指示器
+//    PageIndicator {
+//        id: pageIndicator
+//        anchors {
+//            top: centerImage.bottom
+//            horizontalCenter: parent.horizontalCenter
+//        }
+//        count: 5
+//        //自动更改索引
+//        interactive: true
+//        //索引改变时
+//        onCurrentIndexChanged: {
+//            current = currentIndex
+//        }
+//        delegate: Rectangle {
+//            width: 20; height: 5
+//            radius: 5
+//            color: current===index ? "black" : "gray"
+
+//            MouseArea {
+//                anchors.fill: parent
+//                cursorShape: Qt.PointingHandCursor
+//                hoverEnabled: true
+//                onEntered: {
+//                    current = index
+//                    timer.stop()
+//                }
+//                onExited: {
+//                    timer.start()
+//                }
+//            }
+//        }
+//    }
+
+//    //计时器，实现自动切换（轮播图片）
+//    Timer {
+//        id: timer
+//        interval: 3000
+//        repeat: true
+//        onTriggered: {
+//            if (songList.length > 0)
+//                current = current==songList.length-1 ? 0 : current+1
+//        }
+//        running: true
+//    }
+
+//    //分别得到三张轮播图的Url
+//    function getLeftImgSrc() {
+//        return songList.length ? songList[(current-1+songList.length)%songList.length].artists[0].img1v1Url : ""
+//    }
+//    function getCenterImgSrc() {
+//        return songList.length ? songList[current].artists[0].img1v1Url : ""
+//    }
+//    function getRightImgSrc() {
+//        return songList.length ? songList[(current+1+songList.length)%songList.length].artists[0].img1v1Url : ""
+//    }
+//}  //end Frame

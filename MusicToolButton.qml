@@ -1,0 +1,31 @@
+import QtQuick
+import QtQuick.Controls
+
+ToolButton {
+    property string iconSource: ""
+
+    property string toolTip: "提示"
+
+    property bool isCheckable: false
+    property bool isChecked: false
+
+    id: self
+
+    icon.source: iconSource
+
+    //提示是否可见
+    ToolTip.visible: hovered
+    //提示内容
+    ToolTip.text: toolTip
+
+    //默认为鼠标悬浮背景变白
+    background: Rectangle {
+        color: self.down || (isCheckable && self.isChecked) ? "#eeeeee" : "#00000000"
+    }
+    icon.color: self.down ? "#00000000" : "#eeeeee"
+
+    //是否可检测
+    checkable: isCheckable
+    //如果可检测，则在点击或有焦点空格后转换true或false
+    checked: isChecked
+}
