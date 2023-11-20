@@ -1,5 +1,8 @@
-//PageHomeView.qml
-
+/*
+author: zouyujie
+date: 2023.11.18
+function: 中间内容，区别于top和bottom
+*/
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts

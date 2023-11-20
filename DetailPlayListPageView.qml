@@ -1,8 +1,12 @@
-//DetailPlayListPageView
-
+/*
+author: zouyujie
+date: 2023.11.18
+function: 专辑/歌单的界面，是个模板界面，赋值即可
+*/
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "requestNetwork.js" as MyJs //命名首字母必须大写，否则编译失败
 
 ColumnLayout {
 
@@ -19,7 +23,7 @@ ColumnLayout {
         playListListView.scrollBar.position = 0
         //已实现异步请求
         var url = (targetType==="10" ? "/album":"/playlist/detail")+"?id="+targetId
-        postRequest(url, loadPlayList)
+        MyJs.postRequest(url, loadPlayList)
     }
 
     Rectangle {
@@ -70,7 +74,7 @@ ColumnLayout {
     MusicListView {
         id: playListListView
         onSwitchPage: function(offset) {
-            postRequest("/playlist/track/all?id="+targetId+"&limit=60&offset="+offset, getOnePageSongs)
+            MyJs.postRequest("/playlist/track/all?id="+targetId+"&limit=60&offset="+offset, getOnePageSongs)
         }
     }
 
@@ -101,8 +105,8 @@ ColumnLayout {
             playListCover.imgSrc = playlist.coverImgUrl
             playListDesc.text = playlist.description
             //为音乐列表赋值,下半部分,再次请求数据两次
-            postRequest("/playlist/track/all?id="+targetId+"&limit=600", getAllSongs) //响应慢
-            postRequest("/playlist/track/all?id="+targetId+"&limit=60&offset=0", getOnePageSongs) //响应更快一点
+            MyJs.postRequest("/playlist/track/all?id="+targetId+"&limit=600", getAllSongs) //响应慢
+            MyJs.postRequest("/playlist/track/all?id="+targetId+"&limit=60&offset=0", getOnePageSongs) //响应更快一点
         }
     }  //end function loadPlayList()
 
@@ -122,50 +126,4 @@ ColumnLayout {
                                                    }
                                                })
     }
-
-    //网络请求模板函数
-    function postRequest(url="", handleData) {
-        //得到一个空闲的manager
-        var manager = getFreeManager()
-
-        function onReply(data) {
-            //得到数据立马断开连接,重置状态
-            switch(manager) {
-            case 0:
-                onReplySignal1.disconnect(onReply)
-                reSetStatus(manager)
-                break;
-            case 1:
-                onReplySignal2.disconnect(onReply)
-                reSetStatus(manager)
-                break;
-            case 2:
-                onReplySignal3.disconnect(onReply)
-                reSetStatus(manager)
-                break;
-            }
-            //如果传递的数据为空，则判断网络请求失败
-            if (data==="") {
-                console.log("Error: no data!")
-                return;
-            }
-            //处理数据
-            handleData(data)
-        }
-        switch(manager) {
-        case 0:
-            onReplySignal1.connect(onReply)
-            break;
-        case 1:
-            onReplySignal2.connect(onReply)
-            break;
-        case 2:
-            onReplySignal3.connect(onReply)
-            break;
-        }
-
-        //请求数据
-        getData(url, manager)
-    }
-
 }

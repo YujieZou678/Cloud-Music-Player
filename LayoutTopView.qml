@@ -1,3 +1,8 @@
+/*
+author: zouyujie
+date: 2023.11.18
+function: 最上面那层部件，最小化，关闭......
+*/
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts

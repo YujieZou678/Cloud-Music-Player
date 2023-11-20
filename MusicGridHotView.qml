@@ -1,5 +1,8 @@
-//MusicGridHotView
-
+/*
+author: zouyujie
+date: 2023.11.18
+function: 推荐内容窗口的热门歌单视图
+*/
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -66,8 +69,6 @@ Item {
                         pageHomeView.showPlayList(id, "1000")
                     }
                 }
-
-
             }  //end Frame
 
         }

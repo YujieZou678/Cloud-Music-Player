@@ -1,5 +1,8 @@
-//DetailHistoryPageView
-
+/*
+author: zouyujie
+date: 2023.11.18
+function:
+*/
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts

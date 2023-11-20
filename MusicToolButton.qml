@@ -1,3 +1,8 @@
+/*
+author: zouyujie
+date: 2023.11.18
+function: 最上面那层部件所用的按钮
+*/
 import QtQuick
 import QtQuick.Controls
 

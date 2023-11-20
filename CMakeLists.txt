@@ -32,8 +32,7 @@ qt_add_qml_module(appCloud_Music_Player
     QML_FILES MusicGridLatestView.qml
     QML_FILES MusicListView.qml
     QML_FILES DetailPlayListPageView.qml
-    QML_FILES
-    QML_FILES
+    QML_FILES requestNetwork.js
 )
 
 target_compile_features(appCloud_Music_Player PRIVATE cxx_std_20)

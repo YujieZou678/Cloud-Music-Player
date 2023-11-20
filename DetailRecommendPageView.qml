@@ -1,5 +1,8 @@
-//DetailRecommendPageView.qml
-
+/*
+author: zouyujie
+date: 2023.11.18
+function: 推荐内容窗口
+*/
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -215,7 +218,6 @@ ScrollView {
         latestView.latestList = latestLists.slice(0,30)
     }
 
-    //网络请求模板函数
     function postRequest(url="", handleData, moduleName) {
         //得到一个空闲的manager
         var manager = getFreeManager()

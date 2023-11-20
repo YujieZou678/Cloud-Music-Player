@@ -1,8 +1,12 @@
-//MusicGridLatestView
-
+/*
+author: zouyujie
+date: 2023.11.18
+function: 推荐内容窗口的新歌推荐视图
+*/
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "requestNetwork.js" as MyJs //命名首字母必须大写，否则编译失败
 
 Item {
 
@@ -91,7 +95,7 @@ Item {
         console.log("id: "+id+" 正在播放音乐")
         var url = "/song/url?id="+id
 
-        postRequest(url, dataHandle)
+        MyJs.postRequest(url, dataHandle)
     }
 
     function dataHandle(_data) {
@@ -102,50 +106,5 @@ Item {
         layoutBottomView.timeText = getTime(window.mediaPlayer.position/1000)+"/"+getTime(window.mediaPlayer.duration/1000)
         layoutBottomView.playStateSource = "qrc:/images/pause.png"
         mediaPlayer.play()
-    }
-
-    //网络请求模板函数
-    function postRequest(url="", handleData) {
-        //得到一个空闲的manager
-        var manager = getFreeManager()
-
-        function onReply(data) {
-            //得到数据立马断开连接,重置状态
-            switch(manager) {
-            case 0:
-                onReplySignal1.disconnect(onReply)
-                reSetStatus(manager)
-                break;
-            case 1:
-                onReplySignal2.disconnect(onReply)
-                reSetStatus(manager)
-                break;
-            case 2:
-                onReplySignal3.disconnect(onReply)
-                reSetStatus(manager)
-                break;
-            }
-            //如果传递的数据为空，则判断网络请求失败
-            if (data==="") {
-                console.log("Error: no data!")
-                return;
-            }
-            //处理数据
-            handleData(data)
-        }
-        switch(manager) {
-        case 0:
-            onReplySignal1.connect(onReply)
-            break;
-        case 1:
-            onReplySignal2.connect(onReply)
-            break;
-        case 2:
-            onReplySignal3.connect(onReply)
-            break;
-        }
-
-        //请求数据
-        getData(url, manager)
     }
 }

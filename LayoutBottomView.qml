@@ -1,3 +1,8 @@
+/*
+author: zouyujie
+date: 2023.11.18
+function: 最下面那层部件，播放，切换歌曲，进度条......
+*/
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts

@@ -1,5 +1,8 @@
-//MusicRoundImage.qml
-
+/*
+author: zouyujie
+date: 2023.11.18
+function: 图片视图
+*/
 import QtQuick
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
@@ -11,24 +14,27 @@ Item {
     Image{
         id:image
         anchors.centerIn: parent
-        source:imgSrc
+        source: imgSrc
         smooth: true
         visible: false
         width: parent.width
         height: parent.height
         fillMode: Image.PreserveAspectCrop
         antialiasing: true
+        cache: true
+        //当状态改变时
         onStatusChanged: {
             switch (image.status) {
             case Image.Ready:
                 imageLoading.visible = false
                 break;
             case Image.Loading:
-                //加载缓冲的画面
+                //加载缓冲的画面，可能一直loading
                 imageLoading.visible = true
                 break;
             case Image.Error:
-                console.log("加载超时......")
+                console.log("图片加载错误......")
+                image.source = "qrc:/images/errorLoading.png"
                 break;
             }
         }
@@ -49,6 +55,15 @@ Item {
         duration: 2000
         running: true
         loops: Animation.Infinite
+    }
+    Text {
+        id: loadingProgress
+        //向下取整
+        text: Math.floor(image.progress*100)+"%"
+        font.pixelSize: 15
+        anchors.top: imageLoading.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: 15
     }
 
     Rectangle{
