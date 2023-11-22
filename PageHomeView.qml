@@ -29,7 +29,6 @@ RowLayout {
     spacing: 0
 
     Frame{
-
         Layout.preferredWidth: 200
         Layout.fillHeight: true
         padding: 0

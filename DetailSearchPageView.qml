@@ -22,7 +22,6 @@ ColumnLayout {
         width: parent.width
         height: 60
         color: "#00000000"
-
         Text {
             x: 10
             //文本与底部对齐
@@ -30,6 +29,10 @@ ColumnLayout {
             text: qsTr("搜索音乐")
             font.family: window.mFONT_FAMILY
             font.pointSize: 25
+        }
+        MouseArea{
+            anchors.fill: parent
+            onClicked: { searchInput.focus = false }
         }
     }
 
@@ -73,9 +76,14 @@ ColumnLayout {
             doSearch(offset)
         }
         modelName: "DetailSearchPageView"
+        onIfClickChanged: {
+            searchInput.focus = false
+        }
     }
 
     function doAndSearch() {
+        searchInput.focus = false
+
         musicListView.imageLoadingVisible = true
         musicListView.listViewVisible = false
         musicListView.pageButtonVisible = false

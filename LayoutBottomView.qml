@@ -7,6 +7,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtMultimedia
+import "requestNetwork.js" as MyJs
 
 Rectangle {
 
@@ -32,6 +33,9 @@ Rectangle {
             iconSource: "qrc:/images/previous.png"
             iconWidth: 32; iconHeight: 32
             toolTip: "上一曲"
+            onClicked: {
+                MyJs.switchSong(false)
+            }
         }
         MusicIconButton {
             id: playIconButton
@@ -57,6 +61,9 @@ Rectangle {
             iconSource: "qrc:/images/next.png"
             iconWidth: 32; iconHeight: 32
             toolTip: "下一曲"
+            onClicked: {
+                MyJs.switchSong(true)
+            }
         }
         //不是具体组件，没有默认属性，宽高会伸缩
         Item {
@@ -143,13 +150,13 @@ Rectangle {
             Layout.preferredWidth: 50
             iconSource: "qrc:/images/favorite.png"
             iconWidth: 32; iconHeight: 32
-            toolTip: "下一曲"
+            toolTip: "我喜欢"
         }
         MusicIconButton {
             Layout.preferredWidth: 50
             iconSource: "qrc:/images/repeat.png"
             iconWidth: 32; iconHeight: 32
-            toolTip: "重复播放"
+            toolTip: "顺序播放"
         }
         Item {
             Layout.fillHeight: true

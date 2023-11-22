@@ -29,25 +29,6 @@ ApplicationWindow {
     height: mWINDOW_HEIGHT
     visible: true
     title: qsTr("Cloud Music Player")
-    //添加主窗口快捷键
-    Shortcut {
-        context: Qt.WindowShortcut
-        sequence: "space"
-        onActivated: {
-            switch(mediaPlayer.playbackState) {
-            case MediaPlayer.PlayingState:
-                mediaPlayer.pause()
-                layoutBottomView.playStateSource = "qrc:/images/stop.png"
-                console.log("歌曲已暂停")
-                break;
-            case MediaPlayer.PausedState:
-                mediaPlayer.play()
-                console.log("歌曲继续播放")
-                layoutBottomView.playStateSource = "qrc:/images/pause.png"
-                break;
-            }
-        }
-    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -102,20 +83,7 @@ ApplicationWindow {
             case MediaPlayer.EndOfMedia:
                 //当前歌曲结束
                 console.log("自动播放下一首")
-                if (mainMusicList.length < 1) return
-                mainMusicListIndex = (mainMusicListIndex+mainMusicList.length+1)%mainMusicList.length
-                var nextSong = mainMusicList[mainMusicListIndex]
-                var targetId = nextSong.id
-                var nameText = nextSong.name+"-"+nextSong.artist
-                MyJs.playMusic(targetId, nameText, dataHandle)
-                //切换列表高亮块
-                if (mainModelName === "DetailSearchPageView") {
-                    var loader = pageHomeView.repeater.itemAt(1)
-                    loader.item.musicListView.listView.currentIndex = mainMusicListIndex
-                } else if (mainModelName === "DetailPlayListPageView") {
-                    var loader = pageHomeView.repeater.itemAt(5)
-                    loader.item.playListListView.listView.currentIndex = mainMusicListIndex
-                }
+                MyJs.switchSong(true)
                 break;
             case MediaPlayer.InvalidMedia:
                 console.log("The media cannot be played")
@@ -133,5 +101,42 @@ ApplicationWindow {
         mediaPlayer.source = data[0].url
         layoutBottomView.playStateSource = "qrc:/images/pause.png"
         mediaPlayer.play()
+    }
+
+    //添加主窗口快捷键，空格暂停
+    Shortcut {
+        context: Qt.WindowShortcut
+        sequence: "space"
+        onActivated: {
+            console.log("123")
+            switch(mediaPlayer.playbackState) {
+            case MediaPlayer.PlayingState:
+                mediaPlayer.pause()
+                layoutBottomView.playStateSource = "qrc:/images/stop.png"
+                console.log("歌曲已暂停")
+                break;
+            case MediaPlayer.PausedState:
+                mediaPlayer.play()
+                console.log("歌曲继续播放")
+                layoutBottomView.playStateSource = "qrc:/images/pause.png"
+                break;
+            }
+        }
+    }
+    //添加主窗口快捷键，上一首
+    Shortcut {
+        context: Qt.WindowShortcut
+        sequence: "Ctrl+Alt+left"
+        onActivated: {
+            MyJs.switchSong(false)
+        }
+    }
+    //添加主窗口快捷键，下一首
+    Shortcut {
+        context: Qt.WindowShortcut
+        sequence: "Ctrl+Alt+Right"
+        onActivated: {
+            MyJs.switchSong(true)
+        }
     }
 }

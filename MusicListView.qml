@@ -29,6 +29,8 @@ Frame {
             pageHomeView.ifPlaying = (pageHomeView.ifPlaying+2+1)%2
         }
     }
+    //是否点击了该列表，用于解决搜索界面光标的问题，点击了即值就变了
+    property int ifClick: -1
 
     //暴露接口
     property alias scrollBar: scrollBar
@@ -142,6 +144,7 @@ Frame {
                 }
                 onClicked: {
                     listView.currentIndex = index
+                    ifClick = (ifClick+2+1)%2
                 }
                 //双击播放音乐
                 onDoubleClicked: {

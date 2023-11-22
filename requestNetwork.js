@@ -56,6 +56,33 @@ function playMusic(targetId, nameText, dataHandle) {
     layoutBottomView.slider.handleRec.imageLoading.visible = true
 }
 
+//列表切换歌曲模板函数,参数：需要判断是切换上一首还是下一首
+function switchSong(isNextSong) {
+    //判断此时是否有列表
+    if (mainMusicList.length < 1) {
+        console.log("此时没有列表播放")
+        return
+    }
+    //判断是上一首还是下一首
+    if (isNextSong) {
+        mainMusicListIndex = (mainMusicListIndex+mainMusicList.length+1)%mainMusicList.length
+    } else {
+        mainMusicListIndex = (mainMusicListIndex+mainMusicList.length-1)%mainMusicList.length
+    }
+    var nextSong = mainMusicList[mainMusicListIndex]
+    var targetId = nextSong.id
+    var nameText = nextSong.name+"-"+nextSong.artist
+    playMusic(targetId, nameText, dataHandle)
+    //切换列表高亮块
+    if (mainModelName === "DetailSearchPageView") {
+        var loader = pageHomeView.repeater.itemAt(1)
+        loader.item.musicListView.listView.currentIndex = mainMusicListIndex
+    } else if (mainModelName === "DetailPlayListPageView") {
+        var loader = pageHomeView.repeater.itemAt(5)
+        loader.item.playListListView.listView.currentIndex = mainMusicListIndex
+    }
+}
+
 
 
 
