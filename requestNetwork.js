@@ -43,6 +43,19 @@ function postRequest(url="", handleData) {
     getData(url, manager)
 }
 
+//播放音乐模板函数，参数说明：1.歌曲id 2.歌曲名字+作者 3.槽函数
+function playMusic(targetId, nameText, dataHandle) {
+    console.log("id: "+targetId+" 正在播放音乐")
+    var url = "/song/url?id="+targetId
+
+    postRequest(url, dataHandle)
+
+    //歌名与信息先显示，加载后才有声音
+    layoutBottomView.nameText = nameText
+    layoutBottomView.timeText = getTime(window.mediaPlayer.position/1000)+"/"+getTime(window.mediaPlayer.duration/1000)
+    layoutBottomView.slider.handleRec.imageLoading.visible = true
+}
+
 
 
 

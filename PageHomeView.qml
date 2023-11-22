@@ -1,7 +1,7 @@
 /*
 author: zouyujie
 date: 2023.11.18
-function: 中间内容，区别于top和bottom
+function: 中间内容，区别于top和bottom。加载各种其他qml组件视图。
 */
 import QtQuick
 import QtQuick.Controls
@@ -11,6 +11,10 @@ import QtQml
 RowLayout {
 
     property int defaultIndex: 0
+    property alias repeater: repeater
+
+    //判断列表视图是否播放音乐,0:对应qmlList[5]独立 1:对应qmlList[6]独立
+    property int ifPlaying: -1
 
     property var qmlList: [
         {icon:"recommend-white",value:"推荐内容",qml:"DetailRecommendPageView",menu:true},
@@ -18,7 +22,9 @@ RowLayout {
         {icon:"local-white",value:"本地音乐",qml:"DetailLocalPageView",menu:true},
         {icon:"history-white",value:"播放历史",qml:"DetailHistoryPageView",menu:true},
         {icon:"favorite-big-white",value:"我喜欢的",qml:"DetailFavoritePageView",menu:true},
-        {icon:"",value:"",qml:"DetailPlayListPageView",menu:false}]
+        {icon:"",value:"",qml:"DetailPlayListPageView",menu:false},
+        {icon:"",value:"",qml:"DetailPlayListPageView",menu:false}
+    ]
 
     spacing: 0
 
@@ -103,8 +109,9 @@ RowLayout {
                         }
 
                         onClicked:{
-                            //只要点击菜单，第5个.qml就不可见
+                            //只要点击菜单，第5和第6个.qml就不可见
                             repeater.itemAt(5).visible = false
+                            repeater.itemAt(6).visible = false
 
                             //item.ListView.view = 该item对应的ListView
                             repeater.itemAt(menuViewDelegateItem.ListView.view.currentIndex).visible =false
@@ -129,6 +136,7 @@ RowLayout {
 
                 //后台自动加载第五个qml组件
                 repeater.itemAt(5).source = qmlList[5].qml+".qml"
+                repeater.itemAt(6).source = qmlList[6].qml+".qml"
             }
         }  //end ColumnLayout
     }  //end Frame
@@ -144,10 +152,44 @@ RowLayout {
         }
     }
 
+    //加载PlayList视图，并赋值给视图
     function showPlayList(targetId="", targetType="10") {
+        if (ifPlaying === 0) {
+            /* 0:对应qmlList[5]独立 */
+
+            //得到当前正在播放的歌单的id
+            var playingId = repeater.itemAt(5).item.playingPlayListId
+            //判断id是不是独立的视图id
+            if (targetId === playingId) {
+                repeater.itemAt(menuView.currentIndex).visible =false
+                repeater.itemAt(6).visible = false
+                var loader = repeater.itemAt(5)
+                loader.visible=true
+            } else { handle(6, targetId, targetType) }
+        }
+        else if (ifPlaying === 1) {
+            /* 1:对应qmlList[6]独立 */
+
+            //得到当前正在播放的歌单的id
+            var playingId = repeater.itemAt(6).item.playingPlayListId
+            //判断id是不是独立的视图id
+            if (targetId === playingId) {
+                repeater.itemAt(menuView.currentIndex).visible =false
+                repeater.itemAt(5).visible = false
+                var loader = repeater.itemAt(6)
+                loader.visible=true
+            } else { handle(5, targetId, targetType) }
+        }
+        else {
+            /* 没有播放歌单的情况 */
+            handle(5, targetId, targetType)
+        }
+    }
+
+    function handle(index, targetId, targetType) {
         //item.ListView.view = 该item对应的ListView
         repeater.itemAt(menuView.currentIndex).visible =false
-        var loader = repeater.itemAt(5)
+        var loader = repeater.itemAt(index)
         loader.visible=true
         //靠loader为其加载的qml组件里面的赋值
         loader.item.targetType = targetType
@@ -156,10 +198,4 @@ RowLayout {
         loader.item.playListListView.listViewVisible = false
         loader.item.playListListView.pageButtonVisible = false
     }
-//    function hidePlayList() {
-//        //item.ListView.view = 该item对应的ListView
-//        repeater.itemAt(menuView.currentIndex).visible =true
-//        var loader = repeater.itemAt(5)
-//        loader.visible=false
-//    }
 }

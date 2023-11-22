@@ -11,6 +11,9 @@ import "requestNetwork.js" as MyJs //命名首字母必须大写，否则编译�
 
 
 ColumnLayout {
+
+    property alias musicListView: musicListView
+
     Layout.fillHeight: true
     Layout.fillWidth: true
 
@@ -41,7 +44,7 @@ ColumnLayout {
             }
             selectByMouse: true
             selectionColor: "#999999"
-            placeholderText: "请输入搜索关键词"
+            placeholderText: "王贰浪"
             placeholderTextColor: "#999999"
             background: Rectangle {
                 color: "#00000000"
@@ -69,6 +72,7 @@ ColumnLayout {
         onSwitchPage: function(offset) {
             doSearch(offset)
         }
+        modelName: "DetailSearchPageView"
     }
 
     function doAndSearch() {
@@ -101,11 +105,9 @@ ColumnLayout {
     //执行搜索
     function doSearch(offset = 0) {
         var keyWords = searchInput.text
+        //搜索没有输入，搜索的是默认值
         if (keyWords.length < 1) {
-            musicListView.imageLoadingVisible = false
-            musicListView.listViewVisible = false
-            musicListView.pageButtonVisible = false
-            console.log("输入不能为空！")
+            MyJs.postRequest("/search?keywords="+searchInput.placeholderText+"&offset="+offset+"&limit="+musicListView.pageSize, dataHandle)
             return
         }
 

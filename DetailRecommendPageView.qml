@@ -218,6 +218,7 @@ ScrollView {
         latestView.latestList = latestLists.slice(0,30)
     }
 
+    //网络请求模板函数的重载
     function postRequest(url="", handleData, moduleName) {
         //得到一个空闲的manager
         var manager = getFreeManager()

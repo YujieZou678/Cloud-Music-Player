@@ -6,6 +6,7 @@ function: 推荐内容窗口的banner视图
 import QtQuick
 import QtQuick.Controls
 import QtQml
+import QtMultimedia
 import "requestNetwork.js" as MyJs //命名首字母必须大写，否则编译失败
 
 /*
@@ -40,12 +41,17 @@ Frame {
                         var item = pathView.model[index]
                         var targetId = item.targetId+""
                         var targetType = item.targetType+""
+                        var nameText = item.typeTitle
                         console.log(targetId, targetType, " 正在点击banner")
 
                         switch(targetType) {
                         case "1":
                             //播放单曲
-                            playMusic(index)
+                            if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
+                                mediaPlayer.pause()
+                                mediaPlayer.source = ""
+                            }
+                            MyJs.playMusic(targetId,nameText,dataHandle)
                             break;
                         case "10":
                             //打开专辑
@@ -147,19 +153,6 @@ Frame {
         running: true
     }
 
-    //点击执行
-    function playMusic(index) {
-        if (bannerList.length<1) return
-        var id = bannerList[index].targetId
-        console.log("id: "+id+" 正在播放音乐")
-        var url = "/song/url?id="+id
-
-        MyJs.postRequest(url, dataHandle)
-
-        layoutBottomView.nameText = bannerList[index].typeTitle
-        layoutBottomView.timeText = getTime(window.mediaPlayer.position/1000)+"/"+getTime(window.mediaPlayer.duration/1000)
-    }
-
     function dataHandle(_data) {
         var data = JSON.parse(_data).data
         //赋值,播放音乐
@@ -168,7 +161,6 @@ Frame {
         mediaPlayer.play()
     }
 }
-
 
   /*
    * Version one: 简易版，固定图片位置，改变Url*/

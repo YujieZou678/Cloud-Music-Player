@@ -108,14 +108,34 @@ Rectangle {
                         color: "#73a7ab"
                     }
                 }
+                property alias handleRec: handleRec
                 handle: Rectangle {
+                    id: handleRec
                     x: slider.leftPadding + (slider.availableWidth - width)*slider.visualPosition
                     y: slider.topPadding + (slider.availableHeight - height)/2
                     width: 15; height: 15
-                    radius: 5
+                    radius: 10
                     color: "#f0f0f0"
                     border.color: "#73a7ab"
                     border.width: 0.5
+
+                    property alias imageLoading: imageLoading
+                    //缓冲画面
+                    Image {
+                        id: imageLoading
+                        source: "qrc:/images/loading.png"
+                        width: 12; height: 12
+                        visible: false
+                        anchors.centerIn: parent
+                    }
+                    RotationAnimation {
+                        target: imageLoading
+                        from: 0
+                        to: 360
+                        duration: 500
+                        running: true
+                        loops: Animation.Infinite
+                    }
                 }
             }
         }

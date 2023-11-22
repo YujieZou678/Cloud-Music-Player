@@ -13,14 +13,16 @@ ColumnLayout {
     //通过ID判断是否切换了歌单
     property string targetId: ""
     property string targetType: ""
-    property string name: ""
+    property string name: ""  //专辑名字
 
     property alias playListListView: playListListView
+    property alias playingPlayListId: playListListView.isPlayingPlayListId
 
     //鼠标点了不同的banner会改变
     onTargetIdChanged: {
         playListListView.currentPage = 0
         playListListView.scrollBar.position = 0
+        playListListView.currentPlayListId = targetId
         //已实现异步请求
         var url = (targetType==="10" ? "/album":"/playlist/detail")+"?id="+targetId
         MyJs.postRequest(url, loadPlayList)
@@ -76,6 +78,7 @@ ColumnLayout {
         onSwitchPage: function(offset) {
             MyJs.postRequest("/playlist/track/all?id="+targetId+"&limit=60&offset="+offset, getOnePageSongs)
         }
+        modelName: "DetailPlayListPageView"
     }
 
     function loadPlayList(data) {

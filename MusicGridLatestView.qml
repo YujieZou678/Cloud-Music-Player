@@ -6,6 +6,7 @@ function: 推荐内容窗口的新歌推荐视图
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtMultimedia
 import "requestNetwork.js" as MyJs //命名首字母必须大写，否则编译失败
 
 Item {
@@ -63,7 +64,7 @@ Item {
                         leftMargin: 5
                         top: songName.bottom
                     }
-                    text: modelData.album.artists[0].name
+                    text: modelData.artists[0].name
                     font {
                         family: window.mFONT_FAMILY
                     }
@@ -81,7 +82,15 @@ Item {
                         background.color = "#00000000"
                     }
                     onClicked: {
-                        playMusic(index)
+                        //播放单曲
+                        if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
+                            mediaPlayer.pause()
+                            mediaPlayer.source = ""
+                        }
+                        var item = latestList[index]
+                        var targetId = item.id
+                        var nameText = item.name+"-"+item.artists[0].name
+                        MyJs.playMusic(targetId,nameText,dataHandle)
                     }
                 }
 
@@ -89,21 +98,10 @@ Item {
         }
     }
 
-    function playMusic(index = 0) {
-        if (latestList.length<1) return
-        var id = latestList[index].id
-        console.log("id: "+id+" 正在播放音乐")
-        var url = "/song/url?id="+id
-
-        MyJs.postRequest(url, dataHandle)
-    }
-
     function dataHandle(_data) {
         var data = JSON.parse(_data).data
         //赋值
         mediaPlayer.source = data[0].url
-        layoutBottomView.nameText = latestList[index].name+"-"+latestList[index].artists[0].name
-        layoutBottomView.timeText = getTime(window.mediaPlayer.position/1000)+"/"+getTime(window.mediaPlayer.duration/1000)
         layoutBottomView.playStateSource = "qrc:/images/pause.png"
         mediaPlayer.play()
     }

@@ -7,6 +7,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Shapes
+import QtMultimedia
 import "requestNetwork.js" as MyJs //命名首字母必须大写，否则编译失败
 
 Frame {
@@ -14,10 +15,24 @@ Frame {
     //需要赋值
     property var musicList: []
     property int songCount: 0
-
     property int currentPage: 0
     property int pageSize: 60
+
+    //得到当前是哪个模块加载列表，PlayList或者Search
+    property string modelName: ""
+    //得到当前playList的id
+    property string currentPlayListId: ""
+    //得到当前正在播放的playList的id
+    property string isPlayingPlayListId: ""
+    onIsPlayingPlayListIdChanged: {
+        if (modelName === "DetailPlayListPageView") {
+            pageHomeView.ifPlaying = (pageHomeView.ifPlaying+2+1)%2
+        }
+    }
+
+    //暴露接口
     property alias scrollBar: scrollBar
+    property alias listView: listView
 
     //视觉逻辑
     property alias imageLoadingVisible: imageLoading.visible
@@ -115,6 +130,7 @@ Frame {
             }
 
             MouseArea {
+                id: mouseArea
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
@@ -129,7 +145,20 @@ Frame {
                 }
                 //双击播放音乐
                 onDoubleClicked: {
-                    playMusic(index)
+                    //播放单曲
+                    if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
+                        mediaPlayer.pause()
+                        mediaPlayer.source = ""
+                    }
+                    var targetId = id
+                    var nameText = name+"-"+artist
+                    MyJs.playMusic(targetId,nameText,dataHandle)
+                    //给主窗口播放列表赋值
+                    mainMusicList = musicList
+                    mainMusicListIndex = index
+                    mainModelName = modelName
+                    //当前正在播放的歌单/专辑id赋值
+                    isPlayingPlayListId = currentPlayListId
                 }
 
                 //内容
@@ -149,9 +178,9 @@ Frame {
                         elide: Qt.ElideRight
                     }
                     //最后加载index
-//                    Component.onCompleted: {
-//                        indexNumber.text = index+1 + pageSize*currentPage
-//                    }
+    //                    Component.onCompleted: {
+    //                        indexNumber.text = index+1 + pageSize*currentPage
+    //                    }
 
                     Text {
                         text: name
@@ -190,7 +219,21 @@ Frame {
                                 iconWidth: 16; iconHeight: 16
                                 toolTip: "播放"
                                 onClicked: {
-                                    playMusic(index)
+                                    listView.currentIndex = index
+                                    //播放单曲
+                                    if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
+                                        mediaPlayer.pause()
+                                        mediaPlayer.source = ""
+                                    }
+                                    var targetId = id
+                                    var nameText = name+"-"+artist
+                                    MyJs.playMusic(targetId,nameText,dataHandle)
+                                    //给主窗口播放列表赋值
+                                    mainMusicList = musicList
+                                    mainMusicListIndex = index
+                                    mainModelName = modelName
+                                    //当前正在播放的歌单/专辑id赋值
+                                    isPlayingPlayListId = currentPlayListId
                                 }
                             }
                             MusicIconButton {
@@ -335,21 +378,10 @@ Frame {
         }
     }
 
-    function playMusic(index = 0) {
-        if (musicList.length<1) return
-        var id = musicList[index].id
-        console.log("id: "+id+" 正在播放音乐")
-        var url = "/song/url?id="+id
-
-        MyJs.postRequest(url, dataHandle)
-    }
-
     function dataHandle(_data) {
         var data = JSON.parse(_data).data
         //赋值
         mediaPlayer.source = data[0].url
-        layoutBottomView.nameText = musicList[index].name+"-"+musicList[index].artist
-        layoutBottomView.timeText = getTime(window.mediaPlayer.position/1000)+"/"+getTime(window.mediaPlayer.duration/1000)
         layoutBottomView.playStateSource = "qrc:/images/pause.png"
         mediaPlayer.play()
     }
