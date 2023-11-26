@@ -35,7 +35,7 @@ Item {
                     id: img
                     width: parent.height
                     height: parent.height
-                    imgSrc: modelData.album.picUrl
+                    imgSrc: modelData.picUrl
                 }
 
                 //歌名
@@ -48,7 +48,7 @@ Item {
                         leftMargin: 5
                         verticalCenter: parent.verticalCenter
                     }
-                    text: modelData.album.name
+                    text: modelData.name
                     font {
                         family: window.mFONT_FAMILY
                         pointSize: 11
@@ -64,7 +64,7 @@ Item {
                         leftMargin: 5
                         top: songName.bottom
                     }
-                    text: modelData.artists[0].name
+                    text: modelData.artist
                     font {
                         family: window.mFONT_FAMILY
                     }
@@ -89,20 +89,14 @@ Item {
                         }
                         var item = latestList[index]
                         var targetId = item.id
-                        var nameText = item.name+"-"+item.artists[0].name
-                        MyJs.playMusic(targetId,nameText,dataHandle)
+                        var nameText = item.name+"-"+item.artist
+                        var picUrl = modelData.picUrl
+                        MyJs.playMusic(targetId,nameText,picUrl)
+                        MyJs.addHistoryItem(item)
                     }
                 }
 
             }  //end Frame
         }
-    }
-
-    function dataHandle(_data) {
-        var data = JSON.parse(_data).data
-        //赋值
-        mediaPlayer.source = data[0].url
-        layoutBottomView.playStateSource = "qrc:/images/pause.png"
-        mediaPlayer.play()
     }
 }

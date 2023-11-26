@@ -108,7 +108,7 @@ ScrollView {
             //手动给Json数组赋值
             var json = []
             var oneJsonData = {
-                "imageUrl":"qrc:/images/errorLoading.png"
+                "picUrl":"qrc:/images/errorLoading.png"
             }
             for (var i=0; i<5; i++) {
                 json.push(oneJsonData)
@@ -136,21 +136,13 @@ ScrollView {
         else if (modelName === "latestList") {
             //手动给Json数组赋值
             var json = []
-            var json1 = []
-            var threeJsonData = {
-                "name":"作者"
-            }
-            json1.push(threeJsonData)
             var oneJsonData = {
                 "picUrl":"qrc:/images/errorLoading.png",
-                "name": "专辑",
-                "artists": json1
-            }
-            var twoJsonData = {
-                "album": oneJsonData
+                "name": "歌名",
+                "artist": "作者"
             }
             for (var i=0; i<30; i++) {
-                json.push(twoJsonData)
+                json.push(oneJsonData)
             }
             latestView.latestList = json
 
@@ -201,7 +193,15 @@ ScrollView {
         //在JS中string转JSON，得到Json数组
         var banners = JSON.parse(data).banners
         //赋值
-        bannerView.bannerList = banners
+        bannerView.bannerList = banners.map(item=>{
+                                                return {
+                                                        id: item.targetId,
+                                                        name: item.typeTitle,
+                                                        artist: "未知",
+                                                        picUrl: item.imageUrl,
+                                                        type: item.targetType
+                                                    }
+                                            })
     }
 
     function getHotList(data) {
@@ -215,7 +215,14 @@ ScrollView {
         //在JS中string转JSON，得到Json数组
         var latestLists = JSON.parse(data).data
         //赋值
-        latestView.latestList = latestLists.slice(0,30)
+        latestView.latestList = latestLists.slice(0,30).map(item=>{
+                                                                return {
+                                                                    id: item.id,
+                                                                    name: item.name,
+                                                                    artist: item.artists[0].name,
+                                                                    picUrl: item.album.picUrl
+                                                                }
+                                                            })
     }
 
     //网络请求模板函数的重载

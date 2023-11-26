@@ -27,6 +27,7 @@ Item {
             switch (image.status) {
             case Image.Ready:
                 imageLoading.visible = false
+                loadingProgress.visible = false
                 break;
             case Image.Loading:
                 //加载缓冲的画面，可能一直loading

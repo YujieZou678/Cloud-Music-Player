@@ -32,16 +32,17 @@ Frame {
             height: pathView.height
             z: PathView.z ? PathView.z : 0
             scale: PathView.scale ? PathView.scale : 1
-            imgSrc: modelData.imageUrl
+            imgSrc: modelData.picUrl
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
                     if (pathView.currentIndex == index) {
-                        var item = pathView.model[index]
-                        var targetId = item.targetId+""
-                        var targetType = item.targetType+""
-                        var nameText = item.typeTitle
+                        var item = bannerList[index]
+                        var targetId = item.id+""
+                        var targetType = item.type+""
+                        var nameText = item.name
+                        var picUrl = item.picUrl
                         console.log(targetId, targetType, " 正在点击banner")
 
                         switch(targetType) {
@@ -51,7 +52,8 @@ Frame {
                                 mediaPlayer.pause()
                                 mediaPlayer.source = ""
                             }
-                            MyJs.playMusic(targetId,nameText,dataHandle)
+                            MyJs.playMusic(targetId,nameText,picUrl)
+                            MyJs.addHistoryItem(item)
                             break;
                         case "10":
                             //打开专辑
@@ -151,14 +153,6 @@ Frame {
                 pathView.currentIndex = (pathView.currentIndex + 1) % pathView.count
         }
         running: true
-    }
-
-    function dataHandle(_data) {
-        var data = JSON.parse(_data).data
-        //赋值,播放音乐
-        mediaPlayer.source = data[0].url
-        layoutBottomView.playStateSource = "qrc:/images/pause.png"
-        mediaPlayer.play()
     }
 }
 

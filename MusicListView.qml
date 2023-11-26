@@ -155,10 +155,12 @@ Frame {
                     }
                     var targetId = id
                     var nameText = name+"-"+artist
-                    MyJs.playMusic(targetId,nameText,dataHandle)
+                    var picUrl_ = picUrl
+                    MyJs.playMusic(targetId,nameText,picUrl_)
                     //给主窗口播放列表赋值
-                    mainMusicList = musicList
-                    mainMusicListIndex = index
+                    MyJs.addHistoryItem(musicList[index])
+                    mainAllMusicList = musicList
+                    mainAllMusicListIndex = index
                     mainModelName = modelName
                     //当前正在播放的歌单/专辑id赋值
                     isPlayingPlayListId = currentPlayListId
@@ -230,10 +232,12 @@ Frame {
                                     }
                                     var targetId = id
                                     var nameText = name+"-"+artist
-                                    MyJs.playMusic(targetId,nameText,dataHandle)
+                                    var picUrl_ = picUrl
+                                    MyJs.playMusic(targetId,nameText,picUrl_)
+                                    MyJs.addHistoryItem(musicList[index])
                                     //给主窗口播放列表赋值
-                                    mainMusicList = musicList
-                                    mainMusicListIndex = index
+                                    mainAllMusicList = musicList
+                                    mainAllMusicListIndex = index
                                     mainModelName = modelName
                                     //当前正在播放的歌单/专辑id赋值
                                     isPlayingPlayListId = currentPlayListId
@@ -379,13 +383,5 @@ Frame {
                 }
             }
         }
-    }
-
-    function dataHandle(_data) {
-        var data = JSON.parse(_data).data
-        //赋值
-        mediaPlayer.source = data[0].url
-        layoutBottomView.playStateSource = "qrc:/images/pause.png"
-        mediaPlayer.play()
     }
 }

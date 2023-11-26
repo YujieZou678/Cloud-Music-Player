@@ -14,7 +14,16 @@ Rectangle {
     property alias slider: slider
     property alias nameText: nameText.text
     property alias timeText: timeText.text
-    property alias playStateSource: playIconButton.iconSource
+    property alias modePlay: playMode.toolTip  //播放模式
+    property alias playStateSource: playIconButton.iconSource  //播放/暂停按钮
+    property alias musicCoverSrc: musicCover.imgSrc  //图片信息
+
+    property var playModeSwitch: [  //播放模式提示语的数组
+        { name: "顺序播放", source: "qrc:/images/repeat.png"},
+        { name: "随机播放", source: "qrc:/images/random.png"},
+        { name: "循环播放", source: "qrc:/images/single-repeat.png"}
+    ]
+    property int indexPlayMode: 0
 
     Layout.fillWidth: true
     height: 60
@@ -34,7 +43,7 @@ Rectangle {
             iconWidth: 32; iconHeight: 32
             toolTip: "上一曲"
             onClicked: {
-                MyJs.switchSong(false)
+                MyJs.switchSong(false, modePlay, false)
             }
         }
         MusicIconButton {
@@ -62,7 +71,7 @@ Rectangle {
             iconWidth: 32; iconHeight: 32
             toolTip: "下一曲"
             onClicked: {
-                MyJs.switchSong(true)
+                MyJs.switchSong(true, modePlay, false)
             }
         }
         //不是具体组件，没有默认属性，宽高会伸缩
@@ -146,6 +155,11 @@ Rectangle {
                 }
             }
         }
+        MusicRoundImage {
+            id: musicCover
+            width: 50; height: 50
+            imgSrc: "qrc:/images/errorLoading.png"
+        }
         MusicIconButton {
             Layout.preferredWidth: 50
             iconSource: "qrc:/images/favorite.png"
@@ -153,10 +167,14 @@ Rectangle {
             toolTip: "我喜欢"
         }
         MusicIconButton {
+            id: playMode
             Layout.preferredWidth: 50
-            iconSource: "qrc:/images/repeat.png"
+            iconSource: playModeSwitch[indexPlayMode].source
             iconWidth: 32; iconHeight: 32
-            toolTip: "顺序播放"
+            toolTip: playModeSwitch[indexPlayMode].name
+            onClicked: {
+                indexPlayMode = (indexPlayMode+3+1)%3
+            }
         }
         Item {
             Layout.fillHeight: true

@@ -93,14 +93,7 @@ ColumnLayout {
             playListDesc.text = album.description
             //为音乐列表赋值,下半部分
             playListListView.songCount = songs.length
-            playListListView.musicList = songs.map(item=>{
-                                                       return {
-                                                           id: item.id,
-                                                           name: item.name,
-                                                           artist: item.ar[0].name,
-                                                           album: item.al.name
-                                                       }
-                                                   })
+            playListListView.musicList = MyJs.getFormatData(songs)  //用JS对数据进行格式化，相当于自定义
         } else if (targetType==="1000") {  //是歌单的情况
             var playlist = JSON.parse(data).playlist
             //上半部分赋值
@@ -120,13 +113,6 @@ ColumnLayout {
 
     function getOnePageSongs(data) {
         var songsOnePage = JSON.parse(data).songs
-        playListListView.musicList = songsOnePage.map(item=>{
-                                                   return {
-                                                       id: item.id,
-                                                       name: item.name,
-                                                       artist: item.ar[0].name,
-                                                       album: item.al.name
-                                                   }
-                                               })
+        playListListView.musicList = MyJs.getFormatData(songsOnePage)  //用JS对数据进行格式化，相当于自定义
     }
 }

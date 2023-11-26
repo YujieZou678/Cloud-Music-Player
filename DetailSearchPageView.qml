@@ -99,15 +99,7 @@ ColumnLayout {
         //赋值
         musicListView.songCount = result.songCount
         console.log("\""+searchInput.text+"\" 搜索歌曲数目：" + result.songCount)
-        //用JS对数据进行格式化，相当于自定义
-        musicListView.musicList = songList.map(item=>{
-                                                   return {
-                                                       id: item.id,
-                                                       name: item.name,
-                                                       artist: item.artists[0].name,
-                                                       album: item.album.name
-                                                   }
-                                               })
+        musicListView.musicList = MyJs.getFormatData(songList)  //用JS对数据进行格式化，相当于自定义
     }
 
     //执行搜索
@@ -115,11 +107,11 @@ ColumnLayout {
         var keyWords = searchInput.text
         //搜索没有输入，搜索的是默认值
         if (keyWords.length < 1) {
-            MyJs.postRequest("/search?keywords="+searchInput.placeholderText+"&offset="+offset+"&limit="+musicListView.pageSize, dataHandle)
+            MyJs.postRequest("/cloudsearch?keywords="+searchInput.placeholderText+"&offset="+offset+"&limit="+musicListView.pageSize, dataHandle)
             return
         }
 
-        MyJs.postRequest("/search?keywords="+keyWords+"&offset="+offset+"&limit="+musicListView.pageSize, dataHandle)
+        MyJs.postRequest("/cloudsearch?keywords="+keyWords+"&offset="+offset+"&limit="+musicListView.pageSize, dataHandle)
     }
 }
 

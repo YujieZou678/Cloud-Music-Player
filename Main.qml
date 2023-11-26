@@ -17,13 +17,27 @@ ApplicationWindow {
     property string mFONT_FAMILY: "微软雅黑"
 
     property alias mediaPlayer: mediaPlayer
-    //用于列表播放后，自动播放下一首
-    property var mainMusicList: []
-    property int mainMusicListIndex: 0
-    property string mainModelName: ""
-
     property alias layoutBottomView: layoutBottomView
     property alias pageHomeView: pageHomeView
+
+    //用于列表播放后，切歌
+    property var mainHistoryList: []   //播放历史列表
+    onMainHistoryListChanged: {  //一开始自动会执行一次
+        if (mainHistoryList.length > 0) {
+            if(mainPlayListIndex === mainHistoryList.length - 2) {
+                 mainPlayListIndex = mainHistoryList.length - 1
+            }
+            else {
+                //分叉处理
+                mainHistoryList.splice(mainPlayListIndex+1, (mainHistoryList.length-mainPlayListIndex-2))
+                mainPlayListIndex = mainHistoryList.length - 1
+            }
+        }
+    }
+    property int mainPlayListIndex: -1  //当前播放列表的index,一般情况在历史列表末尾
+    property var mainAllMusicList: []  //当前歌单/专辑列表
+    property int mainAllMusicListIndex: -1  //当前歌单/专辑列表的index
+    property string mainModelName: ""  //播放模式
 
     width: mWINDOW_WIDTH
     height: mWINDOW_HEIGHT
@@ -83,7 +97,7 @@ ApplicationWindow {
             case MediaPlayer.EndOfMedia:
                 //当前歌曲结束
                 console.log("自动播放下一首")
-                MyJs.switchSong(true)
+                MyJs.switchSong(true, layoutBottomView.modePlay, true)
                 break;
             case MediaPlayer.InvalidMedia:
                 console.log("The media cannot be played")
@@ -95,20 +109,11 @@ ApplicationWindow {
         id: audioOutPut
     }
 
-    function dataHandle(_data) {
-        var data = JSON.parse(_data).data
-        //赋值,播放音乐
-        mediaPlayer.source = data[0].url
-        layoutBottomView.playStateSource = "qrc:/images/pause.png"
-        mediaPlayer.play()
-    }
-
     //添加主窗口快捷键，空格暂停
     Shortcut {
         context: Qt.WindowShortcut
         sequence: "space"
         onActivated: {
-            console.log("123")
             switch(mediaPlayer.playbackState) {
             case MediaPlayer.PlayingState:
                 mediaPlayer.pause()
@@ -128,7 +133,7 @@ ApplicationWindow {
         context: Qt.WindowShortcut
         sequence: "Ctrl+Alt+left"
         onActivated: {
-            MyJs.switchSong(false)
+            MyJs.switchSong(false, layoutBottomView.modePlay, false)
         }
     }
     //添加主窗口快捷键，下一首
@@ -136,7 +141,7 @@ ApplicationWindow {
         context: Qt.WindowShortcut
         sequence: "Ctrl+Alt+Right"
         onActivated: {
-            MyJs.switchSong(true)
+            MyJs.switchSong(true, layoutBottomView.modePlay, false)
         }
     }
 }
