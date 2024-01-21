@@ -57,10 +57,12 @@ Rectangle {
                 case MediaPlayer.PlayingState:
                     window.mediaPlayer.pause()
                     iconSource = "qrc:/images/stop.png"
+                    pageDetailView.cover.isRotating = false
                     break;
                 case MediaPlayer.PausedState:
                     window.mediaPlayer.play()
                     iconSource = "qrc:/images/pause.png"
+                    pageDetailView.cover.isRotating = true
                     break;
                 }
             }
@@ -155,10 +157,25 @@ Rectangle {
                 }
             }
         }
-        MusicRoundImage {
+        MusicBorderImage {
             id: musicCover
             width: 50; height: 50
             imgSrc: "qrc:/images/errorLoading.png"
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onPressed: {
+                    musicCover.scale = 0.9
+                }
+                onReleased: {
+                    musicCover.scale = 1
+                }
+
+                onClicked: {
+                    pageDetailView.visible = ! pageDetailView.visible
+                    pageHomeView.visible = ! pageHomeView.visible
+                }
+            }
         }
         MusicIconButton {
             Layout.preferredWidth: 50

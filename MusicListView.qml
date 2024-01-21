@@ -154,9 +154,8 @@ Frame {
                         mediaPlayer.source = ""
                     }
                     var targetId = id
-                    var nameText = name+"-"+artist
                     var picUrl_ = picUrl
-                    MyJs.playMusic(targetId,nameText,picUrl_)
+                    MyJs.playMusic(targetId,name,artist,picUrl_)
                     //给主窗口播放列表赋值
                     MyJs.addHistoryItem(musicList[index])
                     mainAllMusicList = musicList
@@ -231,9 +230,8 @@ Frame {
                                         mediaPlayer.source = ""
                                     }
                                     var targetId = id
-                                    var nameText = name+"-"+artist
                                     var picUrl_ = picUrl
-                                    MyJs.playMusic(targetId,nameText,picUrl_)
+                                    MyJs.playMusic(targetId,name,artist,picUrl_)
                                     MyJs.addHistoryItem(musicList[index])
                                     //给主窗口播放列表赋值
                                     mainAllMusicList = musicList

@@ -31,7 +31,7 @@ Item {
                 }
                 clip: true
 
-                MusicRoundImage {
+                MusicBorderImage {
                     id: img
                     width: parent.height
                     height: parent.height
@@ -89,9 +89,10 @@ Item {
                         }
                         var item = latestList[index]
                         var targetId = item.id
-                        var nameText = item.name+"-"+item.artist
+                        var name = item.name
+                        var artist = item.artist
                         var picUrl = modelData.picUrl
-                        MyJs.playMusic(targetId,nameText,picUrl)
+                        MyJs.playMusic(targetId,name,artist,picUrl)
                         MyJs.addHistoryItem(item)
                     }
                 }

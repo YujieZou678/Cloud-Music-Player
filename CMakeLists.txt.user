@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 11.0.2, 2023-11-26T12:46:28. -->
+<!-- Written by QtCreator 11.0.2, 2024-01-21T17:14:05. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -401,7 +401,6 @@
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">appCloud_Music_Player</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/root/my_test/Cloud Music Player/build-Cloud_Music_Player-Desktop_Qt_6_5_2_GCC_64bit-Debug</value>
    </valuemap>
    <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

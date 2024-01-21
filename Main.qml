@@ -16,9 +16,11 @@ ApplicationWindow {
     property int mWINDOW_HEIGHT: 800
     property string mFONT_FAMILY: "微软雅黑"
 
+    /* 实际上主函数不需要声明，会自动加载到全部应用里 */
     property alias mediaPlayer: mediaPlayer
     property alias layoutBottomView: layoutBottomView
     property alias pageHomeView: pageHomeView
+    property alias pageDetailView: pageDetailView
 
     //用于列表播放后，切歌
     property var mainHistoryList: []   //播放历史列表
@@ -56,6 +58,12 @@ ApplicationWindow {
         PageHomeView {
             id: pageHomeView
         }
+        //歌曲的细节视图。唱片旋转，歌词。
+        PageDetailView {
+            id: pageDetailView
+            visible: false
+
+        }
 
         //底部工具栏
         LayoutBottomView {
@@ -65,10 +73,16 @@ ApplicationWindow {
 
     MediaPlayer {
         id: mediaPlayer
+        property var times: []
         audioOutput: audioOutPut
         //拖动，有延迟，应该是内部position赋值之后继续计时，但是没有实时传出数据
         onPositionChanged: {
             layoutBottomView.timeText = getTime(mediaPlayer.position/1000)+"/"+getTime(mediaPlayer.duration/1000)
+
+            if (times.length>0) {
+                var count = times.filter(time=>time<mediaPlayer.position).length
+                pageDetailView.current = (count===0) ? 0:count-1
+            }
         }
 
         onMediaStatusChanged: {
@@ -88,6 +102,7 @@ ApplicationWindow {
             case MediaPlayer.BufferedMedia:
                 //数据缓冲完成
                 layoutBottomView.slider.handleRec.imageLoading.visible = false
+                pageDetailView.cover.isRotating = true
                 console.log("结束加载动画，开始播放")
                 break;
             case MediaPlayer.StalledMedia:
@@ -118,12 +133,14 @@ ApplicationWindow {
             case MediaPlayer.PlayingState:
                 mediaPlayer.pause()
                 layoutBottomView.playStateSource = "qrc:/images/stop.png"
+                pageDetailView.cover.isRotating = false
                 console.log("歌曲已暂停")
                 break;
             case MediaPlayer.PausedState:
                 mediaPlayer.play()
                 console.log("歌曲继续播放")
                 layoutBottomView.playStateSource = "qrc:/images/pause.png"
+                pageDetailView.cover.isRotating = true
                 break;
             }
         }

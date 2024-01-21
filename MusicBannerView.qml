@@ -41,7 +41,7 @@ Frame {
                         var item = bannerList[index]
                         var targetId = item.id+""
                         var targetType = item.type+""
-                        var nameText = item.name
+                        var name = item.name
                         var picUrl = item.picUrl
                         console.log(targetId, targetType, " 正在点击banner")
 
@@ -52,7 +52,7 @@ Frame {
                                 mediaPlayer.pause()
                                 mediaPlayer.source = ""
                             }
-                            MyJs.playMusic(targetId,nameText,picUrl)
+                            MyJs.playMusic(targetId,name,"",picUrl)
                             MyJs.addHistoryItem(item)
                             break;
                         case "10":

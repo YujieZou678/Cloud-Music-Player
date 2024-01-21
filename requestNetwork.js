@@ -43,18 +43,28 @@ function postRequest(url="", handleData) {
     getData(url, manager)
 }
 
-//播放音乐模板函数，参数说明：1.歌曲id 2.歌曲名字+作者 3.图片信息地址
-function playMusic(targetId, nameText, picUrl) {
+//播放音乐模板函数，参数说明：1.歌曲id 2.歌曲名字 3.作者 4.图片信息地址
+function playMusic(targetId, name, artist, picUrl) {
     console.log("id: "+targetId+" 正在播放音乐")
     var url = "/song/url?id="+targetId
 
     postRequest(url, dataHandle)
 
     //歌名与信息先显示，加载后才有声音
-    layoutBottomView.nameText = nameText
+    if (artist === "") {
+        layoutBottomView.nameText = name + "-" + "未知"
+        pageDetailView.artistText = "未知"
+    } else {
+        layoutBottomView.nameText = name + "-" + artist
+        pageDetailView.artistText = artist
+    }
     layoutBottomView.timeText = getTime(window.mediaPlayer.position/1000)+"/"+getTime(window.mediaPlayer.duration/1000)
     layoutBottomView.slider.handleRec.imageLoading.visible = true
     layoutBottomView.musicCoverSrc = picUrl
+    pageDetailView.nameText = name
+    //得到歌词
+    var url_ = "/lyric?id="+targetId
+    postRequest(url_, getLyric)
 }
 function dataHandle(_data) {  //上面的槽函数
     var data = JSON.parse(_data).data
@@ -62,6 +72,29 @@ function dataHandle(_data) {  //上面的槽函数
     mediaPlayer.source = data[0].url
     layoutBottomView.playStateSource = "qrc:/images/pause.png"
     mediaPlayer.play()
+}
+function getLyric(_data) {
+    var data = JSON.parse(_data).lrc.lyric  //歌词
+    if (data.length < 1) return
+    var lyrics = data.replace(/\[.*\]/gi,"").split("\n")
+
+    if (lyrics.length>0) pageDetailView.lyricsList = lyrics
+
+    var times = []
+    data.replace(/\[.*\]/gi, function(match, index){
+        //match [00:00:00]
+        if (match.length>2) {
+            var time = match.substr(1, match.length-2)
+            var arr = time.split(":")
+            var timeValue = arr.length>0 ? parseInt(arr[0])*60*1000 : 0
+            arr = arr.length>1 ? arr[1].split("."):[0,0]
+            timeValue += arr.length>0 ? parseInt(arr[0]*1000) : 0
+            timeValue += arr.length>1 ? parseInt(arr[1]) : 0
+
+            times.push(timeValue)
+        }
+    })
+    mediaPlayer.times = times
 }
 
 //列表切换歌曲模板函数,参数：1.需要判断是切换上一首还是下一首 2.播放模式 3.是否为自动切歌
@@ -95,9 +128,8 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
         //播放
         var nextSong = mainHistoryList[mainPlayListIndex]
         var targetId = nextSong.id
-        var nameText = nextSong.name+"-"+nextSong.artist
         var picUrl = nextSong.picUrl
-        playMusic(targetId, nameText, picUrl)
+        playMusic(targetId, nextSong.name, nextSong.artist, picUrl)
 
         //切换列表高亮块,需要判断这首歌是否属于当前歌单
         for (var i = 0; i<mainAllMusicList.length; i++) {  //在完整的歌单列表顺序查找,最大遍历60次

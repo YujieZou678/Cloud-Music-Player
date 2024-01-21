@@ -48,7 +48,7 @@ ColumnLayout {
     RowLayout {
         height: 170
         width: parent.width
-        MusicRoundImage {
+        MusicBorderImage {
             id: playListCover
             width: 150; height: 150
             Layout.leftMargin: 10
