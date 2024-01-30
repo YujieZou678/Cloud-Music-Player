@@ -37,6 +37,7 @@ qt_add_qml_module(appCloud_Music_Player
     QML_FILES PageDetailView.qml
     QML_FILES MusicLyricView.qml
     QML_FILES MusicTextButton.qml
+    SOURCES mysubthread.h mysubthread.cpp
 )
 
 target_compile_features(appCloud_Music_Player PRIVATE cxx_std_20)

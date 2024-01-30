@@ -73,15 +73,15 @@ ApplicationWindow {
 
     MediaPlayer {
         id: mediaPlayer
-        property var times: []
+        property var times: []  //歌词的各个时间段
         audioOutput: audioOutPut
         //拖动，有延迟，应该是内部position赋值之后继续计时，但是没有实时传出数据
         onPositionChanged: {
             layoutBottomView.timeText = getTime(mediaPlayer.position/1000)+"/"+getTime(mediaPlayer.duration/1000)
 
             if (times.length>0) {
-                var count = times.filter(time=>time<mediaPlayer.position).length
-                pageDetailView.current = (count===0) ? 0:count-1
+                var count = times.filter(time=>time<mediaPlayer.position).length  //对数据进行筛选
+                pageDetailView.current = (count===0) ? 0: count-1
             }
         }
 

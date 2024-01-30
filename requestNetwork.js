@@ -46,9 +46,23 @@ function postRequest(url="", handleData) {
 //播放音乐模板函数，参数说明：1.歌曲id 2.歌曲名字 3.作者 4.图片信息地址
 function playMusic(targetId, name, artist, picUrl) {
     console.log("id: "+targetId+" 正在播放音乐")
-    var url = "/song/url?id="+targetId
+    //本地音乐
+    var check = targetId.split(":")
+    if (check[0] === "file") {
+        //本地音乐
+        mediaPlayer.source = targetId
+        layoutBottomView.playStateSource = "qrc:/images/pause.png"
+        mediaPlayer.play()
+    }
+    else {
+        //网络音乐
+        var url = "/song/url?id="+targetId
+        postRequest(url, dataHandle)
 
-    postRequest(url, dataHandle)
+        //得到歌词
+        var url_ = "/lyric?id="+targetId
+        postRequest(url_, getLyric)
+    }
 
     //歌名与信息先显示，加载后才有声音
     if (artist === "") {
@@ -62,9 +76,6 @@ function playMusic(targetId, name, artist, picUrl) {
     layoutBottomView.slider.handleRec.imageLoading.visible = true
     layoutBottomView.musicCoverSrc = picUrl
     pageDetailView.nameText = name
-    //得到歌词
-    var url_ = "/lyric?id="+targetId
-    postRequest(url_, getLyric)
 }
 function dataHandle(_data) {  //上面的槽函数
     var data = JSON.parse(_data).data
@@ -73,18 +84,18 @@ function dataHandle(_data) {  //上面的槽函数
     layoutBottomView.playStateSource = "qrc:/images/pause.png"
     mediaPlayer.play()
 }
-function getLyric(_data) {
+function getLyric(_data) {  //处理歌词
     var data = JSON.parse(_data).lrc.lyric  //歌词
     if (data.length < 1) return
-    var lyrics = data.replace(/\[.*\]/gi,"").split("\n")
+    var lyrics = data.replace(/\[.*\]/gi,"").split("\n")  //得到每一行的歌词
 
     if (lyrics.length>0) pageDetailView.lyricsList = lyrics
 
     var times = []
-    data.replace(/\[.*\]/gi, function(match, index){
-        //match [00:00:00]
+    data.replace(/\[.*\]/gi, function(match, index){  //match为替换的data
+        //match [00:00]
         if (match.length>2) {
-            var time = match.substr(1, match.length-2)
+            var time = match.substr(1, match.length-2)  //substr分割字符串
             var arr = time.split(":")
             var timeValue = arr.length>0 ? parseInt(arr[0])*60*1000 : 0
             arr = arr.length>1 ? arr[1].split("."):[0,0]
