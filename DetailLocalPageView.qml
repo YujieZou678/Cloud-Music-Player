@@ -102,19 +102,21 @@ ColumnLayout {
             }
         }
         MusicTextButton {
-            btnText: "刷新记录"
+            btnText: "刷新缓存"
             btnHeight: 50
             btnWidth: 200
             onClicked: {
-
+                localMusicList = getCache()
+                localListView.songCount = localMusicList.length
+                localListView.musicList = localMusicList
             }
         }
         MusicTextButton {
-            btnText: "清空记录"
+            btnText: "清空缓存"
             btnHeight: 50
             btnWidth: 200
             onClicked: {
-
+                clearCache();
             }
         }
     }

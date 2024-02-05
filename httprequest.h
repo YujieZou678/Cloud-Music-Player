@@ -23,7 +23,8 @@ public:
     Q_INVOKABLE int getFreeManager();
     Q_INVOKABLE void reSetStatus(int);
     Q_INVOKABLE void saveCache(const QList<QVariant>&);  //数据缓存
-    Q_INVOKABLE QList<QVariant> getCache();  //获取缓存数据
+    Q_INVOKABLE QList<QVariantMap> getCache();  //获取缓存数据
+    Q_INVOKABLE void clearCache();  //清空缓存数据
 
     //请求数据完成后执行的函数
     void replyFinished1(QNetworkReply *reply);

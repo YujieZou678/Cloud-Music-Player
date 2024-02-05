@@ -150,19 +150,30 @@ void HttpRequest::saveCache(const QList<QVariant>& data)
     qDebug() << "数据缓存成功。";
 }
 
-QList<QVariant> HttpRequest::getCache()
+bool myCompare(const QVariantMap& a, const QVariantMap& b) {  //降序函数
+    return a.value("id").toString() > b.value("id").toString();
+}
+
+QList<QVariantMap> HttpRequest::getCache()
 {
-    QList<QVariant> data;
+    QList<QVariantMap> data;
 
     settings->beginGroup("localMusic");  //进入localMusic目录。注意该类共用一个settings，记得退出！！！
     QStringList keys = settings->childKeys();
     for (int i=0; i<keys.length(); i++) {
-        data.append(settings->value(keys[i]));
+        data.append(settings->value(keys[i]).toMap());
     }
 
+    std::sort(data.begin(), data.end(), myCompare);  //排序
     qDebug() << "已加载缓存数据。";
     settings->endGroup();  //退出localMusic目录
     return data;
+}
+
+void HttpRequest::clearCache()
+{
+    settings->clear();
+    qDebug() << "已清除缓存数据。";
 }
 
 //得到分秒标准格式时间
