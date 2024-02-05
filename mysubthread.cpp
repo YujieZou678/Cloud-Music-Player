@@ -33,9 +33,9 @@ void MySubThread::getSongsFromFolders(const QStringList& paths)
     //songsList.sort();  //升序
     std::sort(songsList.begin(), songsList.end(), myCompare);  //降序
 
-    foreach (auto oneSong, songsList) {
-        qDebug() << oneSong;
-    }
+//    foreach (auto oneSong, songsList) {
+//        qDebug() << oneSong;
+//    }
 //    qDebug() << songsList.length();
     emit closeSub1Signal(songsList);  //在子线程执行完毕,并传递参数
 }

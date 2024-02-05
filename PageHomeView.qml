@@ -180,7 +180,7 @@ RowLayout {
             } else { handle(5, targetId, targetType) }
         }
         else {
-            /* 没有播放歌单的情况 */
+            /* 没有播放歌单的情况(第一次点的情况) */
             handle(5, targetId, targetType)
         }
     }
@@ -190,6 +190,9 @@ RowLayout {
         repeater.itemAt(menuView.currentIndex).visible =false
         var loader = repeater.itemAt(index)
         loader.visible=true
+        if (loader.item.targetId === targetId) {  //连续两次点同一个专辑/歌单的情况(targetID没变，不会网络请求，可能有bug)
+            return
+        }
         //靠loader为其加载的qml组件里面的赋值
         loader.item.targetType = targetType
         loader.item.targetId = targetId

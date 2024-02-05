@@ -18,7 +18,7 @@ ColumnLayout {
     property alias playListListView: playListListView
     property alias playingPlayListId: playListListView.isPlayingPlayListId
 
-    //鼠标点了不同的banner会改变
+    //鼠标点了不同的专辑/歌单会改变
     onTargetIdChanged: {
         playListListView.currentPage = 0
         playListListView.scrollBar.position = 0

@@ -195,7 +195,7 @@ ScrollView {
         //赋值
         bannerView.bannerList = banners.map(item=>{
                                                 return {
-                                                        id: item.targetId,
+                                                        id: item.targetId+"",
                                                         name: item.typeTitle,
                                                         artist: "未知",
                                                         picUrl: item.imageUrl,
@@ -217,7 +217,7 @@ ScrollView {
         //赋值
         latestView.latestList = latestLists.slice(0,30).map(item=>{
                                                                 return {
-                                                                    id: item.id,
+                                                                    id: item.id+"",
                                                                     name: item.name,
                                                                     artist: item.artists[0].name,
                                                                     picUrl: item.album.picUrl

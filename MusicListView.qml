@@ -18,7 +18,7 @@ Frame {
     property int currentPage: 0
     property int pageSize: 60
 
-    //得到当前是哪个模块加载列表，PlayList或者Search
+    //得到当前是哪个模块加载列表，PlayList或者Search或者Local
     property string modelName: ""
     //得到当前playList的id
     property string currentPlayListId: ""

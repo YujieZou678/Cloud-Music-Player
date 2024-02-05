@@ -2,6 +2,7 @@
 #include "mysubthread.h"
 
 #include <QThread>
+#include <QSettings>
 
 HttpRequest::HttpRequest(QObject *parent)
     : QObject{parent}
@@ -26,6 +27,7 @@ HttpRequest::HttpRequest(QObject *parent)
     connect(this, &HttpRequest::getSongsFF_Signal, classAtSub1Thread, &MySubThread::getSongsFromFolders);
     connect(classAtSub1Thread, &MySubThread::closeSub1Signal, this, &HttpRequest::closeSub1Thread);
 
+    settings = new QSettings("config/local.ini", QSettings::NativeFormat, this);
 }
 
 HttpRequest::~HttpRequest()
@@ -137,6 +139,30 @@ int HttpRequest::getFreeManager()
 void HttpRequest::reSetStatus(int i)
 {
     statusSignal[i] = true;
+}
+
+void HttpRequest::saveCache(const QList<QVariant>& data)
+{
+    for (int i=0; i<data.length(); i++) {
+        settings->setValue("localMusic/"+QString::number(i), data[i]);
+    }
+
+    qDebug() << "数据缓存成功。";
+}
+
+QList<QVariant> HttpRequest::getCache()
+{
+    QList<QVariant> data;
+
+    settings->beginGroup("localMusic");  //进入localMusic目录。注意该类共用一个settings，记得退出！！！
+    QStringList keys = settings->childKeys();
+    for (int i=0; i<keys.length(); i++) {
+        data.append(settings->value(keys[i]));
+    }
+
+    qDebug() << "已加载缓存数据。";
+    settings->endGroup();  //退出localMusic目录
+    return data;
 }
 
 //得到分秒标准格式时间

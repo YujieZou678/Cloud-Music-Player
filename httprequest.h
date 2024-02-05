@@ -5,9 +5,11 @@
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QVariant>
 
 class QThread;
 class MySubThread;
+class QSettings;
 
 class HttpRequest : public QObject
 {
@@ -20,6 +22,8 @@ public:
     Q_INVOKABLE QString getTime(int);
     Q_INVOKABLE int getFreeManager();
     Q_INVOKABLE void reSetStatus(int);
+    Q_INVOKABLE void saveCache(const QList<QVariant>&);  //数据缓存
+    Q_INVOKABLE QList<QVariant> getCache();  //获取缓存数据
 
     //请求数据完成后执行的函数
     void replyFinished1(QNetworkReply *reply);
@@ -45,6 +49,8 @@ private:
 
     QThread* sub1Thread;  //子线程1号
     MySubThread* classAtSub1Thread;  //在子线程1号的类对象
+
+    QSettings* settings;  //缓存设置对象
 
 };
 

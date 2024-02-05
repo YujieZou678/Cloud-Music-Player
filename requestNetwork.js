@@ -62,6 +62,8 @@ function playMusic(targetId, name, artist, picUrl) {
         //得到歌词
         var url_ = "/lyric?id="+targetId
         postRequest(url_, getLyric)
+
+        layoutBottomView.slider.handleRec.imageLoading.visible = true  //缓冲加载界面可视,本地不需要，否则有bug
     }
 
     //歌名与信息先显示，加载后才有声音
@@ -73,7 +75,6 @@ function playMusic(targetId, name, artist, picUrl) {
         pageDetailView.artistText = artist
     }
     layoutBottomView.timeText = getTime(window.mediaPlayer.position/1000)+"/"+getTime(window.mediaPlayer.duration/1000)
-    layoutBottomView.slider.handleRec.imageLoading.visible = true
     layoutBottomView.musicCoverSrc = picUrl
     pageDetailView.nameText = name
 }
@@ -154,6 +155,9 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
                     if (pageHomeView.ifPlaying === 0) { loader = pageHomeView.repeater.itemAt(5) }
                     else if (pageHomeView.ifPlaying === 1) { loader = pageHomeView.repeater.itemAt(6) }
                     loader.item.playListListView.listView.currentIndex = i
+                } else if (mainModelName === "DetailLocalPageView") {
+                    var loader = pageHomeView.repeater.itemAt(2)
+                    loader.item.localListView.listView.currentIndex = i
                 }
                 break;
             }
@@ -197,7 +201,11 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
                     if (pageHomeView.ifPlaying === 0) { loader = pageHomeView.repeater.itemAt(5) }
                     else if (pageHomeView.ifPlaying === 1) { loader = pageHomeView.repeater.itemAt(6) }
                     loader.item.playListListView.listView.currentIndex = i
+                } else if (mainModelName === "DetailLocalPageView") {
+                    var loader = pageHomeView.repeater.itemAt(2)
+                    loader.item.localListView.listView.currentIndex = i
                 }
+
                 break;
             }
         }
@@ -217,7 +225,7 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
 function getFormatData(songs) {
     return songs.map(item=>{
                          return {
-                             id: item.id,
+                             id: item.id+"",
                              name: item.name,
                              artist: item.ar[0].name,
                              album: item.al.name,
