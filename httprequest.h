@@ -22,9 +22,14 @@ public:
     Q_INVOKABLE QString getTime(int);
     Q_INVOKABLE int getFreeManager();
     Q_INVOKABLE void reSetStatus(int);
-    Q_INVOKABLE void saveCache(const QList<QVariant>&);  //数据缓存
-    Q_INVOKABLE QList<QVariantMap> getCache();  //获取缓存数据
-    Q_INVOKABLE void clearCache();  //清空缓存数据
+
+    Q_INVOKABLE void saveLocalCache(const QList<QVariant>&);  //本地音乐数据缓存
+    Q_INVOKABLE QList<QVariantMap> getLocalCache();  //获取本地音乐缓存数据
+    Q_INVOKABLE void clearLocalCache();  //清空本地音乐缓存数据
+
+    Q_INVOKABLE void saveHistoryCache(const QList<QVariant>&);  //播放历史数据缓存
+    Q_INVOKABLE QList<QVariantMap> getHistoryCache();  //获取播放历史缓存数据
+    Q_INVOKABLE void clearHistoryCache();  //清空播放历史缓存数据
 
     //请求数据完成后执行的函数
     void replyFinished1(QNetworkReply *reply);

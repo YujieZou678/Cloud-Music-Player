@@ -10,7 +10,7 @@ import QtQml
 
 RowLayout {
 
-    property int defaultIndex: 2
+    property int defaultIndex: 3
     property alias repeater: repeater
 
     //判断列表视图是否播放音乐,0:对应qmlList[5]独立 1:对应qmlList[6]独立

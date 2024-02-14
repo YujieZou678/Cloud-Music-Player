@@ -141,39 +141,70 @@ void HttpRequest::reSetStatus(int i)
     statusSignal[i] = true;
 }
 
-void HttpRequest::saveCache(const QList<QVariant>& data)
+void HttpRequest::saveLocalCache(const QList<QVariant>& data)
 {
     for (int i=0; i<data.length(); i++) {
         settings->setValue("localMusic/"+QString::number(i), data[i]);
     }
 
-    qDebug() << "数据缓存成功。";
+    qDebug() << "本地音乐数据缓存成功。";
 }
 
-bool myCompare(const QVariantMap& a, const QVariantMap& b) {  //降序函数
-    return a.value("id").toString() > b.value("id").toString();
-}
+//bool myCompare(const QVariantMap& a, const QVariantMap& b) {  //降序函数
+//    return a.value("id").toString() > b.value("id").toString();
+//}
 
-QList<QVariantMap> HttpRequest::getCache()
+QList<QVariantMap> HttpRequest::getLocalCache()
 {
     QList<QVariantMap> data;
 
     settings->beginGroup("localMusic");  //进入localMusic目录。注意该类共用一个settings，记得退出！！！
     QStringList keys = settings->childKeys();
     for (int i=0; i<keys.length(); i++) {
-        data.append(settings->value(keys[i]).toMap());
+        data.append(settings->value(QString::number(i)).toMap());
     }
 
-    std::sort(data.begin(), data.end(), myCompare);  //排序
-    qDebug() << "已加载缓存数据。";
+    //std::sort(data.begin(), data.end(), myCompare);  //排序
+    qDebug() << "已加载本地音乐缓存数据。";
     settings->endGroup();  //退出localMusic目录
     return data;
 }
 
-void HttpRequest::clearCache()
+void HttpRequest::clearLocalCache()
 {
-    settings->clear();
-    qDebug() << "已清除缓存数据。";
+    settings->remove("localMusic");
+    qDebug() << "已清除本地音乐缓存数据。";
+}
+
+void HttpRequest::saveHistoryCache(const QList<QVariant> &data)
+{
+    for (int i=0; i<data.length(); i++) {
+        settings->setValue("historyMusic/"+QString::number(i), data[i]);
+    }
+
+    qDebug() << "播放历史数据缓存成功。";
+}
+
+QList<QVariantMap> HttpRequest::getHistoryCache()
+{
+    QList<QVariantMap> data;
+
+    settings->beginGroup("historyMusic");  //进入localMusic目录。注意该类共用一个settings，记得退出！！！
+    QStringList keys = settings->childKeys();
+    for (int i=0; i<keys.length(); i++) {
+        data.append(settings->value(QString::number(i)).toMap());
+    }
+
+    //std::sort(data.begin(), data.end(), myCompare);  //排序
+    qDebug() << "已加载播放历史缓存数据。";
+    settings->endGroup();  //退出historyMusic目录
+    return data;
+}
+
+void HttpRequest::clearHistoryCache()
+{
+    settings->remove("historyMusic");
+    qDebug() << "已清除播放历史缓存数据。";
 }
 
 //得到分秒标准格式时间

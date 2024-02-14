@@ -24,19 +24,26 @@ ApplicationWindow {
 
     //用于列表播放后，切歌
     property var mainHistoryList: []   //播放历史列表
+    property bool loadCacheCause: true  //是否是加载缓存导致
     onMainHistoryListChanged: {  //一开始自动会执行一次
-        if (mainHistoryList.length > 0) {
-            if(mainPlayListIndex === mainHistoryList.length - 2) {
-                 mainPlayListIndex = mainHistoryList.length - 1
-            }
-            else {
-                //分叉处理
-                mainHistoryList.splice(mainPlayListIndex+1, (mainHistoryList.length-mainPlayListIndex-2))
-                mainPlayListIndex = mainHistoryList.length - 1
+        if (mainHistoryList.length === 0) {
+            var dataCache = getHistoryCache()
+            if (dataCache.length < 1) {
+                console.log("播放历史缓存数据为空。")
+                loadCacheCause = false
+            } else {
+                mainHistoryList = dataCache  //加载缓存
             }
         }
+        else {
+            if (loadCacheCause) { loadCacheCause = false; return }
+            if (mainHistoryList.length > 20) { mainHistoryList.shift() }  //限制历史列表范围，考虑复杂度!
+            saveHistoryCache(mainHistoryList)  //每播放一首歌就需要重新缓存
+            var loader = pageHomeView.repeater.itemAt(3).item.historyListView  //每播放一首歌就需要改变历史视图
+            loader.musicList = mainHistoryList.slice().reverse()  //副本颠倒
+            loader.songCount = mainHistoryList.length
+        }
     }
-    property int mainPlayListIndex: -1  //当前播放列表的index,一般情况在历史列表末尾
     property var mainAllMusicList: []  //当前歌单/专辑列表
     property int mainAllMusicListIndex: -1  //当前歌单/专辑列表的index
     property string mainModelName: ""  //播放模式
@@ -62,7 +69,6 @@ ApplicationWindow {
         PageDetailView {
             id: pageDetailView
             visible: false
-
         }
 
         //底部工具栏

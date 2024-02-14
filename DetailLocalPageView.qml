@@ -93,7 +93,7 @@ ColumnLayout {
                     localListView.songCount = localMusicList.length
                     localListView.musicList = localMusicList
                     console.log("本地音乐 自动搜索歌曲数目："+autoMusicList.length)
-                    saveCache(localMusicList)  //保存缓存
+                    saveLocalCache(localMusicList)  //保存缓存
 
                     onGetSongsFFEnd_Signal.disconnect(onReply)  //断开连接
                 }
@@ -106,7 +106,7 @@ ColumnLayout {
             btnHeight: 50
             btnWidth: 200
             onClicked: {
-                localMusicList = getCache()
+                localMusicList = getLocalCache()
                 localListView.songCount = localMusicList.length
                 localListView.musicList = localMusicList
             }
@@ -116,7 +116,7 @@ ColumnLayout {
             btnHeight: 50
             btnWidth: 200
             onClicked: {
-                clearCache();
+                clearLocalCache();
             }
         }
     }
@@ -127,7 +127,7 @@ ColumnLayout {
     }
 
     Component.onCompleted: {
-        localMusicList = getCache()
+        localMusicList = getLocalCache()
         localListView.songCount = localMusicList.length
         localListView.musicList = localMusicList
     }
@@ -172,7 +172,7 @@ ColumnLayout {
             localListView.songCount = localMusicList.length
             localListView.musicList = localMusicList
             console.log("本地音乐 手动添加歌曲数目："+handMusicList.length)
-            saveCache(localMusicList)  //保存缓存
+            saveLocalCache(localMusicList)  //保存缓存
         }
     }
 }
