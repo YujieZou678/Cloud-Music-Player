@@ -122,6 +122,10 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
 
     switch (modePlay) {
     case "顺序播放":
+        //清空随机历史列表和index
+        mainRandomHistoryList = []
+        mainRandomHistoryListIndex = -1
+
         /* 顺序播放 */
         if (isNextSong) {  //下一首
             mainAllMusicListIndex = (mainAllMusicListIndex + 1 + mainAllMusicList.length)%mainAllMusicList.length
@@ -153,43 +157,91 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
         }
         break;
     case "随机播放":
+        if (mainRandomHistoryList.length < 1) {
+            mainRandomHistoryList.push(mainAllMusicList[mainAllMusicListIndex])  //添加上一首歌
+            mainRandomHistoryListIndex = 0
+        }
+
         /* 随机播放 */
         if (isNextSong) {   //下一首
-            var randomIndex = Math.floor(Math.random()*mainAllMusicList.length)  //歌单index为随机
-            if (mainAllMusicListIndex === randomIndex) {  //随机可能重复
-                mainAllMusicListIndex = (mainAllMusicListIndex+mainAllMusicList.length+1)%mainAllMusicList.length
-            } else { mainAllMusicListIndex = randomIndex }
+            if (mainRandomHistoryListIndex === mainRandomHistoryList.length-1) {  //在随机历史列表末尾
+                var randomIndex = Math.floor(Math.random()*mainAllMusicList.length)  //歌单index为随机
+                if (mainAllMusicListIndex === randomIndex) {  //随机可能重复
+                    mainAllMusicListIndex = (mainAllMusicListIndex+mainAllMusicList.length+1)%mainAllMusicList.length
+                } else { mainAllMusicListIndex = randomIndex }
+
+                //播放
+                var nextSong = mainAllMusicList[mainAllMusicListIndex]
+                var targetId = nextSong.id
+                var picUrl = nextSong.picUrl
+                playMusic(targetId, nextSong.name, nextSong.artist, picUrl)
+                changeHistoryList(nextSong)  //添加历史
+                mainRandomHistoryList.push(nextSong)  //添加随机历史
+                mainRandomHistoryListIndex = mainRandomHistoryListIndex + 1
+            }
+            else {  //不在随机历史列表末尾
+                mainRandomHistoryListIndex = mainRandomHistoryListIndex + 1
+
+                //播放
+                var nextSong = mainRandomHistoryList[mainRandomHistoryListIndex]
+                for (var i in mainAllMusicList) {  //找到歌在主列表的index，复杂度可能很高！
+                    if (mainAllMusicList[i].id === nextSong.id) {
+                        mainAllMusicListIndex = i
+                        break
+                    }
+                }
+                var targetId = nextSong.id
+                var picUrl = nextSong.picUrl
+                playMusic(targetId, nextSong.name, nextSong.artist, picUrl)
+                changeHistoryList(nextSong)  //添加历史
+            }
         }
         else {  //上一首
-            //
+            if (mainRandomHistoryListIndex === 0) {  //此时依然为随机歌曲
+                var randomIndex = Math.floor(Math.random()*mainAllMusicList.length)  //歌单index为随机
+                if (mainAllMusicListIndex === randomIndex) {  //随机可能重复
+                    mainAllMusicListIndex = (mainAllMusicListIndex+mainAllMusicList.length+1)%mainAllMusicList.length
+                } else { mainAllMusicListIndex = randomIndex }
+
+                //播放
+                var nextSong = mainAllMusicList[mainAllMusicListIndex]
+                var targetId = nextSong.id
+                var picUrl = nextSong.picUrl
+                playMusic(targetId, nextSong.name, nextSong.artist, picUrl)
+                changeHistoryList(nextSong)  //添加历史
+                mainRandomHistoryList.unshift(nextSong)  //在随机历史前面添加
+            }
+            else {  //播放随机里历史列表的上一首
+                mainRandomHistoryListIndex = mainRandomHistoryListIndex - 1
+
+                //播放
+                var nextSong = mainRandomHistoryList[mainRandomHistoryListIndex]
+                for (var i in mainAllMusicList) {  //找到歌在主列表的index，复杂度可能很高！
+                    if (mainAllMusicList[i].id === nextSong.id) {
+                        mainAllMusicListIndex = i
+                        break
+                    }
+                }
+                var targetId = nextSong.id
+                var picUrl = nextSong.picUrl
+                playMusic(targetId, nextSong.name, nextSong.artist, picUrl)
+                changeHistoryList(nextSong)  //添加历史
+            }
         }
 
-        //播放
-        var nextSong = mainAllMusicList[mainAllMusicListIndex]
-        var targetId = nextSong.id
-        var picUrl = nextSong.picUrl
-        playMusic(targetId, nextSong.name, nextSong.artist, picUrl)
-        addHistoryItem(nextSong)  //添加历史
-
-        //切换列表高亮块,需要判断这首歌是否属于当前歌单
-        for (var i = 0; i<mainAllMusicList.length; i++) {  //在完整的歌单列表顺序查找,最大遍历60次
-            if (targetId===mainAllMusicList[i].id) {
-                if (mainModelName === "DetailSearchPageView") {  //判断属于哪个视图的歌单
-                    var loader = pageHomeView.repeater.itemAt(1)
-                    loader.item.musicListView.listView.currentIndex = i
-                } else if (mainModelName === "DetailPlayListPageView") {
-                    //还要判断是显示哪个列表视图
-                    var loader = []
-                    if (pageHomeView.ifPlaying === 0) { loader = pageHomeView.repeater.itemAt(5) }
-                    else if (pageHomeView.ifPlaying === 1) { loader = pageHomeView.repeater.itemAt(6) }
-                    loader.item.playListListView.listView.currentIndex = i
-                } else if (mainModelName === "DetailLocalPageView") {
-                    var loader = pageHomeView.repeater.itemAt(2)
-                    loader.item.localListView.listView.currentIndex = i
-                }
-
-                break;
-            }
+        //切换列表高亮块
+        if (mainModelName === "DetailSearchPageView") {  //判断属于哪个视图的歌单
+            var loader = pageHomeView.repeater.itemAt(1)
+            loader.item.musicListView.listView.currentIndex = mainAllMusicListIndex
+        } else if (mainModelName === "DetailPlayListPageView") {
+            //还要判断是显示哪个列表视图
+            var loader = []
+            if (pageHomeView.ifPlaying === 0) { loader = pageHomeView.repeater.itemAt(5) }
+            else if (pageHomeView.ifPlaying === 1) { loader = pageHomeView.repeater.itemAt(6) }
+            loader.item.playListListView.listView.currentIndex = mainAllMusicListIndex
+        } else if (mainModelName === "DetailLocalPageView") {
+            var loader = pageHomeView.repeater.itemAt(2)
+            loader.item.localListView.listView.currentIndex = mainAllMusicListIndex
         }
         break;
     case "循环播放":

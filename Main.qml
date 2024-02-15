@@ -45,8 +45,15 @@ ApplicationWindow {
         }
     }
     property var mainAllMusicList: []  //当前歌单/专辑列表
+    onMainAllMusicListChanged: {
+        //清空随机历史列表和index
+        mainRandomHistoryList = []
+        mainRandomHistoryListIndex = -1
+    }
     property int mainAllMusicListIndex: -1  //当前歌单/专辑列表的index
     property string mainModelName: ""  //播放模式
+    property var mainRandomHistoryList: []  //随机模式下的历史列表
+    property int mainRandomHistoryListIndex: -1  //随机模式下的历史列表的index
 
     width: mWINDOW_WIDTH
     height: mWINDOW_HEIGHT
