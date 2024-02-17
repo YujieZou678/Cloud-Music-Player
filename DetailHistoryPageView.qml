@@ -1,7 +1,7 @@
 /*
 author: zouyujie
 date: 2023.11.18
-function:
+function: 播放历史列表视图。
 */
 import QtQuick
 import QtQuick.Controls
@@ -10,6 +10,10 @@ import QtQuick.Layouts
 ColumnLayout {
 
     property alias historyListView: historyListView
+    property bool ifNeedRefreshList: false
+    function refreshList() {
+        historyListView.musicList = historyListView.musicList
+    }
 
     Rectangle {
         Layout.fillWidth: true

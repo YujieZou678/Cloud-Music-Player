@@ -31,6 +31,10 @@ public:
     Q_INVOKABLE QList<QVariantMap> getHistoryCache();  //获取播放历史缓存数据
     Q_INVOKABLE void clearHistoryCache();  //清空播放历史缓存数据
 
+    Q_INVOKABLE void saveFavoriteCache(const QList<QVariant>&);  //我喜欢数据缓存
+    Q_INVOKABLE QList<QVariantMap> getFavoriteCache();  //获取我喜欢缓存数据
+    Q_INVOKABLE void clearFavoriteCache();  //清空我喜欢缓存数据
+
     //请求数据完成后执行的函数
     void replyFinished1(QNetworkReply *reply);
     void replyFinished2(QNetworkReply *reply);

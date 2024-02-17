@@ -9,6 +9,10 @@ import QtQuick.Layouts
 import "requestNetwork.js" as MyJs //命名首字母必须大写，否则编译失败
 
 ColumnLayout {
+    property bool ifNeedRefreshList: false  //是否需要刷新列表
+    function refreshList() {  //刷新列表
+        playListListView.musicList = playListListView.musicList
+    }
 
     //通过ID判断是否切换了歌单
     property string targetId: ""

@@ -182,6 +182,9 @@ Rectangle {
             iconSource: "qrc:/images/favorite.png"
             iconWidth: 32; iconHeight: 32
             toolTip: "我喜欢"
+            onClicked: {
+                ifFavorite = !ifFavorite
+            }
         }
         MusicIconButton {
             id: playMode

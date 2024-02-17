@@ -176,7 +176,7 @@ void HttpRequest::clearLocalCache()
     qDebug() << "已清除本地音乐缓存数据。";
 }
 
-void HttpRequest::saveHistoryCache(const QList<QVariant> &data)
+void HttpRequest::saveHistoryCache(const QList<QVariant>& data)
 {
     for (int i=0; i<data.length(); i++) {
         settings->setValue("historyMusic/"+QString::number(i), data[i]);
@@ -189,7 +189,7 @@ QList<QVariantMap> HttpRequest::getHistoryCache()
 {
     QList<QVariantMap> data;
 
-    settings->beginGroup("historyMusic");  //进入localMusic目录。注意该类共用一个settings，记得退出！！！
+    settings->beginGroup("historyMusic");  //进入historyMusic目录。注意该类共用一个settings，记得退出！！！
     QStringList keys = settings->childKeys();
     for (int i=0; i<keys.length(); i++) {
         data.append(settings->value(QString::number(i)).toMap());
@@ -205,6 +205,39 @@ void HttpRequest::clearHistoryCache()
 {
     settings->remove("historyMusic");
     qDebug() << "已清除播放历史缓存数据。";
+}
+
+void HttpRequest::saveFavoriteCache(const QList<QVariant>& data)
+{
+    settings->remove("favoriteMusic");  //先清除再添加
+
+    for (int i=0; i<data.length(); i++) {
+        settings->setValue("favoriteMusic/"+QString::number(i), data[i]);
+    }
+
+    qDebug() << "我喜欢数据缓存成功。";
+}
+
+QList<QVariantMap> HttpRequest::getFavoriteCache()
+{
+    QList<QVariantMap> data;
+
+    settings->beginGroup("favoriteMusic");  //进入favoriteMusic目录。注意该类共用一个settings，记得退出！！！
+    QStringList keys = settings->childKeys();
+    for (int i=0; i<keys.length(); i++) {
+        data.append(settings->value(QString::number(i)).toMap());
+    }
+
+    //std::sort(data.begin(), data.end(), myCompare);  //排序
+    qDebug() << "已加载我喜欢缓存数据。";
+    settings->endGroup();  //退出historyMusic目录
+    return data;
+}
+
+void HttpRequest::clearFavoriteCache()
+{
+    settings->remove("favoriteMusic");
+    qDebug() << "已清除我喜欢缓存数据。";
 }
 
 //得到分秒标准格式时间

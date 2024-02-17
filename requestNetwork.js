@@ -257,14 +257,32 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
 //用Js对Json数组进行格式化,参数：Json数组，各个歌曲
 function getFormatData(songs) {
     return songs.map(item=>{
-                         return {
-                             id: item.id+"",
-                             name: item.name,
-                             artist: item.ar[0].name,
-                             album: item.al.name,
-                             picUrl: item.al.picUrl
+                         var index = checkIsFavorite(item.id+"")
+                         if (index !== -1) {
+                             return mainFavoriteList[index]  //如果是收藏了的，就替换保证是同一个对象
+                         }
+                         else {
+                             return {
+                                 id: item.id+"",
+                                 name: item.name,
+                                 artist: item.ar[0].name,
+                                 album: item.al.name,
+                                 picUrl: item.al.picUrl,
+                                 ifIsFavorite: false
+                             }
                          }
                      })
+}
+
+//判断一首歌是否被收藏（我喜欢）, 此处需注意复杂度！
+function checkIsFavorite(id) {
+    for (var i in mainFavoriteList) {
+        if (id === mainFavoriteList[i].id) {
+            return i
+        }
+    }
+
+    return -1  //没被收藏
 }
 
 //为播放历史列表添加值，只有这样才能触发onChange
@@ -295,6 +313,18 @@ function changeHistoryList(item) {
         //播放的歌曲不存在于历史列表
         addHistoryItem(item)
     }
+}
+
+//收藏一首歌
+function addFavoriteItem(newItem) {
+    var temp = mainFavoriteList
+    temp.push(newItem)
+    mainFavoriteList = temp
+}
+
+//取消收藏一首歌
+function deleteFavoriteItem(oneSong) {
+    mainFavoriteList = mainFavoriteList.filter(item=>item.id!==oneSong.id)
 }
 
 

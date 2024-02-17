@@ -10,7 +10,7 @@ import QtQml
 
 RowLayout {
 
-    property int defaultIndex: 3
+    property int defaultIndex: 4
     property alias repeater: repeater
 
     //判断列表视图是否播放音乐,0:对应qmlList[5]独立 1:对应qmlList[6]独立
@@ -119,6 +119,11 @@ RowLayout {
                             var loader = repeater.itemAt(menuViewDelegateItem.ListView.view.currentIndex)
                             loader.visible=true
                             loader.source = qmlList[index].qml+".qml"
+                            if (loader.item.ifNeedRefreshList) {  //检查是否需要刷新
+                                loader.item.refreshList()
+                                console.log("已经刷新")
+                                loader.item.ifNeedRefreshList = false
+                            }
                         }
                     }
                 }
@@ -133,7 +138,10 @@ RowLayout {
                 //索引
                 menuView.currentIndex = defaultIndex
 
-                //后台自动加载第五个qml组件
+                //后台自动加载
+                repeater.itemAt(2).source = qmlList[2].qml+".qml"
+                repeater.itemAt(3).source = qmlList[3].qml+".qml"
+                repeater.itemAt(4).source = qmlList[4].qml+".qml"
                 repeater.itemAt(5).source = qmlList[5].qml+".qml"
                 repeater.itemAt(6).source = qmlList[6].qml+".qml"
             }
@@ -163,6 +171,10 @@ RowLayout {
                 repeater.itemAt(menuView.currentIndex).visible =false
                 repeater.itemAt(6).visible = false
                 var loader = repeater.itemAt(5)
+                if (loader.item.ifNeedRefreshList) {  //刷新列表
+                    loader.item.refreshList();
+                    loader.item.ifNeedRefreshList = false
+                }
                 loader.visible=true
             } else { handle(6, targetId, targetType) }
         }
@@ -176,6 +188,10 @@ RowLayout {
                 repeater.itemAt(menuView.currentIndex).visible =false
                 repeater.itemAt(5).visible = false
                 var loader = repeater.itemAt(6)
+                if (loader.item.ifNeedRefreshList) {  //刷新列表
+                    loader.item.refreshList()
+                    loader.item.ifNeedRefreshList = false
+                }
                 loader.visible=true
             } else { handle(5, targetId, targetType) }
         }
@@ -191,8 +207,14 @@ RowLayout {
         var loader = repeater.itemAt(index)
         loader.visible=true
         if (loader.item.targetId === targetId) {  //连续两次点同一个专辑/歌单的情况(targetID没变，不会网络请求，可能有bug)
+            if (loader.item.ifNeedRefreshList) {  //刷新列表
+                loader.item.refreshList()
+                console.log("已经刷新")
+                loader.item.ifNeedRefreshList = false
+            }
             return
         }
+        loader.item.ifNeedRefreshList = false  //handle意味着该视图已经会刷新一次
         //靠loader为其加载的qml组件里面的赋值
         loader.item.targetType = targetType
         loader.item.targetId = targetId

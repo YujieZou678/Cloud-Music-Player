@@ -24,19 +24,19 @@ ApplicationWindow {
 
     //用于列表播放后，切歌
     property var mainHistoryList: []   //播放历史列表
-    property bool loadCacheCause: true  //是否是加载缓存导致
+    property bool loadCacheCause1: true  //是否是加载缓存导致
     onMainHistoryListChanged: {  //一开始自动会执行一次
         if (mainHistoryList.length === 0) {
             var dataCache = getHistoryCache()
             if (dataCache.length < 1) {
                 console.log("播放历史缓存数据为空。")
-                loadCacheCause = false
+                loadCacheCause1 = false
             } else {
                 mainHistoryList = dataCache  //加载缓存
             }
         }
         else {
-            if (loadCacheCause) { loadCacheCause = false; return }
+            if (loadCacheCause1) { loadCacheCause1 = false; return }
             if (mainHistoryList.length > 20) { mainHistoryList.shift() }  //限制历史列表范围，考虑复杂度!
             saveHistoryCache(mainHistoryList)  //每播放一首歌就需要重新缓存
             var loader = pageHomeView.repeater.itemAt(3).item.historyListView  //每播放一首歌就需要改变历史视图
@@ -54,6 +54,48 @@ ApplicationWindow {
     property string mainModelName: ""  //播放模式
     property var mainRandomHistoryList: []  //随机模式下的历史列表
     property int mainRandomHistoryListIndex: -1  //随机模式下的历史列表的index
+
+    property var mainFavoriteList: []  //我喜欢列表
+    property bool loadCacheCause2: true  //是否是加载缓存导致
+    property bool ifloadCache: false  //是否加载缓存
+    onMainFavoriteListChanged: {  //所有列表视图都应重新加载
+        if (mainFavoriteList.length === 0) {
+            if (!ifloadCache) {
+                ifloadCache = true
+                var dataCache = getFavoriteCache()  //获取缓存数据
+                if (dataCache.length === 0) {
+                    console.log("我喜欢缓存数据为空。")
+                    loadCacheCause2 = false
+                } else {
+                    mainFavoriteList = dataCache
+                }
+            } else {
+                //减少到0的情况
+                saveFavoriteCache(mainFavoriteList)  //每收藏一首歌就需要缓存
+                var loader = pageHomeView.repeater.itemAt(4).item.favoriteListView  //每播放一首歌就需要改变我喜欢视图
+                loader.musicList = mainFavoriteList.slice().reverse()  //副本颠倒
+                loader.songCount = mainFavoriteList.length
+
+                sendSignalRefreshList()
+            }
+        }
+        else {
+            if (loadCacheCause2) { loadCacheCause2 = false; return }
+            if (mainFavoriteList.length > 20) { mainFavoriteList.shift() }  //限制我喜欢列表范围
+            saveFavoriteCache(mainFavoriteList)  //每收藏一首歌就需要缓存
+            var loader = pageHomeView.repeater.itemAt(4).item.favoriteListView  //每播放一首歌就需要改变历史视图
+            loader.musicList = mainFavoriteList.slice().reverse()  //副本颠倒
+            loader.songCount = mainFavoriteList.length
+
+            sendSignalRefreshList()
+        }
+    }
+    function sendSignalRefreshList() {
+        pageHomeView.repeater.itemAt(2).item.ifNeedRefreshList = true
+        pageHomeView.repeater.itemAt(3).item.ifNeedRefreshList = true
+        pageHomeView.repeater.itemAt(5).item.ifNeedRefreshList = true
+        pageHomeView.repeater.itemAt(6).item.ifNeedRefreshList = true
+    }
 
     width: mWINDOW_WIDTH
     height: mWINDOW_HEIGHT

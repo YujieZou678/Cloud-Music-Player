@@ -7,6 +7,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Qt.labs.platform
+import "requestNetwork.js" as MyJs
 
 ColumnLayout {
 
@@ -14,6 +15,11 @@ ColumnLayout {
     property var localMusicList: []  //本地音乐列表
     property var autoMusicList: []  //自动搜索得到的列表
     property var handMusicList: []  //手动添加得到的列表
+
+    property bool ifNeedRefreshList: false
+    function refreshList() {
+        localListView.musicList = localListView.musicList
+    }
 
     Rectangle {
         Layout.fillWidth: true
@@ -83,7 +89,8 @@ ColumnLayout {
                                                name: song,
                                                artist: artist,
                                                album: "本地音乐",
-                                               picUrl: "qrc:/images/errorLoading.png"
+                                               picUrl: "qrc:/images/errorLoading.png",
+                                               ifIsFavorite: MyJs.checkIsFavorite(id)
                                            })
                             console.log(id)
                         }
@@ -128,8 +135,18 @@ ColumnLayout {
 
     Component.onCompleted: {
         localMusicList = getLocalCache()
+        replaceList()  //跟我喜欢列表做比较替换
         localListView.songCount = localMusicList.length
         localListView.musicList = localMusicList
+    }
+
+    function replaceList() {
+        for (var i in localMusicList) {
+            var index = MyJs.checkIsFavorite(localMusicList[i].id)
+            if (index !== -1) {
+                localMusicList[i] = mainFavoriteList[index]  //如果是收藏了的，就替换保证是同一个对象
+            }
+        }
     }
 
     FileDialog {
@@ -162,7 +179,8 @@ ColumnLayout {
                                        name: song,
                                        artist: artist,
                                        album: "本地音乐",
-                                       picUrl: "qrc:/images/errorLoading.png"
+                                       picUrl: "qrc:/images/errorLoading.png",
+                                       ifIsFavorite: MyJs.checkIsFavorite(path)
                                    })
                     console.log(songsList[i])
                 }

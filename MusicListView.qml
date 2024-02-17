@@ -245,8 +245,18 @@ Frame {
                                 iconSource: "qrc:/images/favorite.png"
                                 iconWidth: 16; iconHeight: 16
                                 toolTip: "喜欢"
+                                ifFavorite: ifIsFavorite
                                 onClicked: {
-                                    //
+                                    ifIsFavorite = !ifIsFavorite  //可以同步当前列表
+                                    musicList[index].ifIsFavorite = !musicList[index].ifIsFavorite
+
+                                    if (!musicList[index].ifIsFavorite) {
+                                        MyJs.deleteFavoriteItem(musicList[index])  //取消收藏
+                                    }
+                                    else {
+                                       MyJs.addFavoriteItem(musicList[index])  //收藏
+                                        //缓存
+                                    }
                                 }
                             }
                             MusicIconButton {
