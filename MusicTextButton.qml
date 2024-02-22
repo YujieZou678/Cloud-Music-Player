@@ -7,7 +7,7 @@ import QtQuick
 import QtQuick.Controls
 
 Button {
-    property alias btnText: self.text    
+    property alias btnText: name.text
 
     property alias isCheckable: self.checkable
     property alias isChecked: self.checked
@@ -17,9 +17,15 @@ Button {
 
     id: self
 
-    text: "Button"
-    font.family: window.mFONT_FAMILY
-    font.pointSize: 14
+
+    Text {
+        id: name
+        text: "Button"
+        color: self.down || (isCheckable && isChecked) ? "#ee000000" : "#eeffffff"
+        anchors.centerIn: parent
+        font.family: window.mFONT_FAMILY
+        font.pointSize: 14
+    }
 
     background: Rectangle {
         implicitHeight: self.height

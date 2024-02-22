@@ -54,6 +54,7 @@ Item {
                         pointSize: 11
                     }
                     elide: Qt.ElideRight
+                    color: "#eeffffff"
                 }
                 //作者
                 Text {
@@ -69,6 +70,7 @@ Item {
                         family: window.mFONT_FAMILY
                     }
                     elide: Qt.ElideRight
+                    color: "#eeffffff"
                 }
 
                 MouseArea {

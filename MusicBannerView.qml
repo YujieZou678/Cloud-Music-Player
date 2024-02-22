@@ -120,7 +120,7 @@ Frame {
         delegate: Rectangle {
             width: 20; height: 5
             radius: 5
-            color: pageIndicator.currentIndex===index ? "black" : "gray"
+            color: pageIndicator.currentIndex===index ? "white" : "#55ffffff"
             Behavior on color {
                 ColorAnimation {
                     duration: 200

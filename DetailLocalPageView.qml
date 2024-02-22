@@ -34,6 +34,7 @@ ColumnLayout {
             text: qsTr("本地音乐")
             font.family: window.mFONT_FAMILY
             font.pointSize: 25
+            color: "#eeffffff"
         }
     }
 
@@ -90,7 +91,7 @@ ColumnLayout {
                                                artist: artist,
                                                album: "本地音乐",
                                                picUrl: "qrc:/images/errorLoading.png",
-                                               ifIsFavorite: MyJs.checkIsFavorite(id)
+                                               ifIsFavorite: MyJs.checkIsFavorite(id)===-1 ? false: true
                                            })
                             console.log(id)
                         }
@@ -108,22 +109,26 @@ ColumnLayout {
                 onGetSongsFFEnd_Signal.connect(onReply)
             }
         }
+//        MusicTextButton {
+//            btnText: "刷新缓存"
+//            btnHeight: 50
+//            btnWidth: 200
+//            onClicked: {
+//                localMusicList = getLocalCache()
+//                localListView.songCount = localMusicList.length
+//                localListView.musicList = localMusicList
+//            }
+//        }
         MusicTextButton {
-            btnText: "刷新缓存"
+            btnText: "清空缓存&刷新"
             btnHeight: 50
             btnWidth: 200
             onClicked: {
+                clearLocalCache()
+                //刷新
                 localMusicList = getLocalCache()
                 localListView.songCount = localMusicList.length
                 localListView.musicList = localMusicList
-            }
-        }
-        MusicTextButton {
-            btnText: "清空缓存"
-            btnHeight: 50
-            btnWidth: 200
-            onClicked: {
-                clearLocalCache();
             }
         }
     }
@@ -135,12 +140,22 @@ ColumnLayout {
 
     Component.onCompleted: {
         localMusicList = getLocalCache()
-        replaceList()  //跟我喜欢列表做比较替换
+        replaceList1()  //跟播放历史做比较替换
+        replaceList2()  //跟我喜欢列表做比较替换
         localListView.songCount = localMusicList.length
         localListView.musicList = localMusicList
     }
 
-    function replaceList() {
+    function replaceList1() {  //跟播放历史做比较替换
+        for (var i in localMusicList) {
+            var index = MyJs.checkIsHistory(localMusicList[i].id)
+            if (index !== -1) {
+                localMusicList[i] = mainHistoryList[index]
+            }
+        }
+    }
+
+    function replaceList2() {  //跟我喜欢做比较替换
         for (var i in localMusicList) {
             var index = MyJs.checkIsFavorite(localMusicList[i].id)
             if (index !== -1) {
@@ -180,7 +195,7 @@ ColumnLayout {
                                        artist: artist,
                                        album: "本地音乐",
                                        picUrl: "qrc:/images/errorLoading.png",
-                                       ifIsFavorite: MyJs.checkIsFavorite(path)
+                                       ifIsFavorite: MyJs.checkIsFavorite(id)===-1 ? false: true
                                    })
                     console.log(songsList[i])
                 }

@@ -12,7 +12,7 @@ ToolBar {
     width: parent.width
     Layout.fillWidth: true
     //ToolBar背景颜色
-    background: Rectangle { color: "#00AAAA" }
+    background: Rectangle { color: "#00000000" }
     RowLayout {
         anchors.fill: parent
         MusicToolButton {

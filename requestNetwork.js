@@ -43,8 +43,8 @@ function postRequest(url="", handleData) {
     getData(url, manager)
 }
 
-//播放音乐模板函数，参数说明：1.歌曲id 2.歌曲名字 3.作者 4.图片信息地址
-function playMusic(targetId, name, artist, picUrl) {
+//播放音乐模板函数，参数说明：1.歌曲id 2.歌曲名字 3.作者 4.图片信息地址 5.是否被收藏
+function playMusic(targetId, name, artist, picUrl, ifIsFavorite) {
     console.log("id: "+targetId+" 正在播放音乐")
     //本地音乐
     var check = targetId.split(":")
@@ -76,6 +76,9 @@ function playMusic(targetId, name, artist, picUrl) {
     }
     layoutBottomView.timeText = getTime(window.mediaPlayer.position/1000)+"/"+getTime(window.mediaPlayer.duration/1000)
     layoutBottomView.musicCoverSrc = picUrl
+    layoutBottomView.ifIsFavorite = ifIsFavorite
+    if (mainBackground.selectImage) { mainBackground.backgroundImageSrc1 = picUrl; mainBackground.selectImage = false }
+    else { mainBackground.backgroundImageSrc2 = picUrl; mainBackground.selectImage = true }
     pageDetailView.nameText = name
 }
 function dataHandle(_data) {  //上面的槽函数
@@ -138,8 +141,9 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
         var nextSong = mainAllMusicList[mainAllMusicListIndex]
         var targetId = nextSong.id
         var picUrl = nextSong.picUrl
-        playMusic(targetId, nextSong.name, nextSong.artist, picUrl)
-        changeHistoryList(nextSong)  //添加历史
+        var ifIsFavorite = nextSong.ifIsFavorite
+        playMusic(targetId, nextSong.name, nextSong.artist, picUrl, ifIsFavorite)
+        changeAndSaveHistoryList(nextSong)  //添加历史
 
         //切换列表高亮块
         if (mainModelName === "DetailSearchPageView") {  //判断属于哪个视图的歌单
@@ -174,8 +178,9 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
                 var nextSong = mainAllMusicList[mainAllMusicListIndex]
                 var targetId = nextSong.id
                 var picUrl = nextSong.picUrl
-                playMusic(targetId, nextSong.name, nextSong.artist, picUrl)
-                changeHistoryList(nextSong)  //添加历史
+                var ifIsFavorite = nextSong.ifIsFavorite
+                playMusic(targetId, nextSong.name, nextSong.artist, picUrl, ifIsFavorite)
+                changeAndSaveHistoryList(nextSong)  //添加历史
                 mainRandomHistoryList.push(nextSong)  //添加随机历史
                 mainRandomHistoryListIndex = mainRandomHistoryListIndex + 1
             }
@@ -192,8 +197,9 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
                 }
                 var targetId = nextSong.id
                 var picUrl = nextSong.picUrl
-                playMusic(targetId, nextSong.name, nextSong.artist, picUrl)
-                changeHistoryList(nextSong)  //添加历史
+                var ifIsFavorite = nextSong.ifIsFavorite
+                playMusic(targetId, nextSong.name, nextSong.artist, picUrl, ifIsFavorite)
+                changeAndSaveHistoryList(nextSong)  //添加历史
             }
         }
         else {  //上一首
@@ -207,8 +213,9 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
                 var nextSong = mainAllMusicList[mainAllMusicListIndex]
                 var targetId = nextSong.id
                 var picUrl = nextSong.picUrl
-                playMusic(targetId, nextSong.name, nextSong.artist, picUrl)
-                changeHistoryList(nextSong)  //添加历史
+                var ifIsFavorite = nextSong.ifIsFavorite
+                playMusic(targetId, nextSong.name, nextSong.artist, picUrl, ifIsFavorite)
+                changeAndSaveHistoryList(nextSong)  //添加历史
                 mainRandomHistoryList.unshift(nextSong)  //在随机历史前面添加
             }
             else {  //播放随机里历史列表的上一首
@@ -224,8 +231,9 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
                 }
                 var targetId = nextSong.id
                 var picUrl = nextSong.picUrl
-                playMusic(targetId, nextSong.name, nextSong.artist, picUrl)
-                changeHistoryList(nextSong)  //添加历史
+                var ifIsFavorite = nextSong.ifIsFavorite
+                playMusic(targetId, nextSong.name, nextSong.artist, picUrl, ifIsFavorite)
+                changeAndSaveHistoryList(nextSong)  //添加历史
             }
         }
 
@@ -249,28 +257,39 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
         var nextSong = mainAllMusicList[mainAllMusicListIndex]
         var targetId = nextSong.id
         var picUrl = nextSong.picUrl
-        playMusic(targetId, nextSong.name, nextSong.artist, picUrl)
+        var ifIsFavorite = nextSong.ifIsFavorite
+        playMusic(targetId, nextSong.name, nextSong.artist, picUrl, ifIsFavorite)
         break;
     }
 }
 
 //用Js对Json数组进行格式化,参数：Json数组，各个歌曲
 function getFormatData(songs) {
-    return songs.map(item=>{
+    //先跟播放历史做比较替换
+    var temp = songs.map(item=>{
+                             var index = checkIsHistory(item.id+"")
+                             if (index !== -1) {
+                                 return mainHistoryList[index]
+                             }
+                             else {
+                                 return {
+                                     id: item.id+"",
+                                     name: item.name,
+                                     artist: item.ar[0].name,
+                                     album: item.al.name,
+                                     picUrl: item.al.picUrl,
+                                     ifIsFavorite: false
+                                 }
+                             }
+                          })
+
+    //再跟我喜欢做比较替换
+    return temp.map(item=>{
                          var index = checkIsFavorite(item.id+"")
                          if (index !== -1) {
-                             return mainFavoriteList[index]  //如果是收藏了的，就替换保证是同一个对象
+                             return mainFavoriteList[index]
                          }
-                         else {
-                             return {
-                                 id: item.id+"",
-                                 name: item.name,
-                                 artist: item.ar[0].name,
-                                 album: item.al.name,
-                                 picUrl: item.al.picUrl,
-                                 ifIsFavorite: false
-                             }
-                         }
+                         else return item
                      })
 }
 
@@ -285,15 +304,20 @@ function checkIsFavorite(id) {
     return -1  //没被收藏
 }
 
-//为播放历史列表添加值，只有这样才能触发onChange
-function addHistoryItem(newItem) {
-    var temp = mainHistoryList
-    temp.push(newItem)
-    mainHistoryList = temp
+//判断一首歌是否在播放历史, 此处需注意复杂度！
+function checkIsHistory(id) {
+    for (var i in mainHistoryList) {
+        if (id === mainHistoryList[i].id) {
+            return i
+        }
+    }
+
+    return -1  //不在播放历史里
 }
 
-//每播放一首歌对历史列表进行检索，然后处理
-function changeHistoryList(item) {
+//改变并保存历史列表。1.刚刚播放的歌曲
+function changeAndSaveHistoryList(item) {
+    mainHistoryList.reverse()  //颠倒回来
     var index = -1  //item位于历史列表的索引
 
     for (var i in mainHistoryList) {
@@ -307,24 +331,47 @@ function changeHistoryList(item) {
         //播放的歌曲存在于历史列表
         var temp = mainHistoryList[index]
         mainHistoryList.splice(index, 1)  //删除
-        addHistoryItem(temp)  //重新添加到末尾
+        mainHistoryList.push(temp)  //添加到末尾
+
+        var temp1 = mainHistoryListCopy[index]
+        mainHistoryListCopy.splice(index, 1)
+        mainHistoryListCopy.push(temp1)
     }
     else {
         //播放的歌曲不存在于历史列表
-        addHistoryItem(item)
+        mainHistoryList.push(item)
+        if (mainHistoryList.length > 20) { mainHistoryList.shift() }  //限制历史列表范围，考虑复杂度!
+
+        var temp = JSON.parse(JSON.stringify(mainHistoryList))  //json对象的深拷贝
+        temp[temp.length-1].ifIsFavorite = false  //改变最后一个值的属性为false
+        mainHistoryListCopy.push(temp[temp.length-1])  //存入最后一个
     }
+
+    saveHistoryCache(mainHistoryListCopy)  //每播放一首歌就需要重新缓存
+    mainHistoryList = mainHistoryList  //触发改变
 }
 
-//收藏一首歌
-function addFavoriteItem(newItem) {
-    var temp = mainFavoriteList
-    temp.push(newItem)
-    mainFavoriteList = temp
-}
+//改变并保存收藏列表。1.收藏/取消收藏 2.某首歌
+function changeAndSaveFavoriteList(ifIsFavorite, item) {
+    mainFavoriteList.reverse()  //颠倒回来
 
-//取消收藏一首歌
-function deleteFavoriteItem(oneSong) {
-    mainFavoriteList = mainFavoriteList.filter(item=>item.id!==oneSong.id)
+    if (!ifIsFavorite) {
+        //需要收藏
+        mainFavoriteList.push(item)
+        if (mainFavoriteList.length > 20) { mainFavoriteList.shift() }  //限制我喜欢列表范围
+    }
+    else {
+        //取消收藏
+        for (var i in mainFavoriteList) {
+            if (item.id === mainFavoriteList[i]) {
+                mainFavoriteList.splice(i, 1)
+                break
+            }
+        }
+    }
+
+    saveFavoriteCache(mainFavoriteList)  //每收藏一首歌就需要缓存
+    mainFavoriteList = mainFavoriteList  //触发改变
 }
 
 

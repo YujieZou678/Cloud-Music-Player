@@ -77,8 +77,7 @@ Frame {
     clip: true
     padding: 0
     background: Rectangle {
-        //底层不能是无色，否则上层没效果，默认为white
-        //color: "lightyellow"
+        color: "#00000000"
     }
 
     ListView {
@@ -96,7 +95,7 @@ Frame {
         }
         header: listViewHeader
         highlight: Rectangle {
-            color: "#f0f0f0"
+            color: "#20f0f0f0"
         }
         highlightMoveDuration: 0
         highlightResizeDuration: 0
@@ -137,7 +136,7 @@ Frame {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onEntered: {
-                    color = "#f0f0f0"
+                    color = "#20f0f0f0"
                 }
                 onExited: {
                     color = "#00000000"
@@ -155,11 +154,12 @@ Frame {
                     }
                     var targetId = id
                     var picUrl_ = picUrl
-                    MyJs.playMusic(targetId,name,artist,picUrl_)
+                    var ifIsFavorite = musicList[index].ifIsFavorite
+                    MyJs.playMusic(targetId,name,artist,picUrl_,ifIsFavorite)
                     //给主窗口播放列表赋值
                     mainAllMusicList = musicList
                     mainAllMusicListIndex = index
-                    MyJs.changeHistoryList(musicList[index])  //需要放到index后面，否则会有bug
+                    MyJs.changeAndSaveHistoryList(musicList[index])  //需要放到index后面，否则会有bug
                     mainModelName = modelName
                     //当前正在播放的歌单/专辑id赋值
                     isPlayingPlayListId = currentPlayListId
@@ -178,7 +178,7 @@ Frame {
                         Layout.preferredWidth: parent.width*0.05
                         font.family: window.mFONT_FAMILY
                         font.pointSize: 13
-                        color: "black"
+                        color: "#eeffffff"
                         elide: Qt.ElideRight
                     }
                     //最后加载index
@@ -192,7 +192,7 @@ Frame {
                         Layout.preferredWidth: parent.width*0.4
                         font.family: window.mFONT_FAMILY
                         font.pointSize: 13
-                        color: "black"
+                        color: "#eeffffff"
                         elide: Qt.ElideRight
                     }
                     Text {
@@ -201,7 +201,7 @@ Frame {
                         Layout.preferredWidth: parent.width*0.15
                         font.family: window.mFONT_FAMILY
                         font.pointSize: 13
-                        color: "black"
+                        color: "#eeffffff"
                         elide: Qt.ElideRight
                     }
                     Text {
@@ -210,7 +210,7 @@ Frame {
                         Layout.preferredWidth: parent.width*0.15
                         font.family: window.mFONT_FAMILY
                         font.pointSize: 13
-                        color: "black"
+                        color: "#eeffffff"
                         elide: Qt.ElideRight
                     }
 
@@ -231,11 +231,12 @@ Frame {
                                     }
                                     var targetId = id
                                     var picUrl_ = picUrl
-                                    MyJs.playMusic(targetId,name,artist,picUrl_)
-                                    MyJs.changeHistoryList(musicList[index])
+                                    var ifIsFavorite = musicList[index].ifIsFavorite
+                                    MyJs.playMusic(targetId,name,artist,picUrl_,ifIsFavorite)
                                     //给主窗口播放列表赋值
                                     mainAllMusicList = musicList
                                     mainAllMusicListIndex = index
+                                    MyJs.changeAndSaveHistoryList(musicList[index])  //需要放到index后面，否则会有bug
                                     mainModelName = modelName
                                     //当前正在播放的歌单/专辑id赋值
                                     isPlayingPlayListId = currentPlayListId
@@ -250,23 +251,17 @@ Frame {
                                     ifIsFavorite = !ifIsFavorite  //可以同步当前列表
                                     musicList[index].ifIsFavorite = !musicList[index].ifIsFavorite
 
-                                    if (!musicList[index].ifIsFavorite) {
-                                        MyJs.deleteFavoriteItem(musicList[index])  //取消收藏
-                                    }
-                                    else {
-                                       MyJs.addFavoriteItem(musicList[index])  //收藏
-                                        //缓存
-                                    }
+                                    MyJs.changeAndSaveFavoriteList(!musicList[index].ifIsFavorite, musicList[index])
                                 }
                             }
-                            MusicIconButton {
-                                iconSource: "qrc:/images/clear.png"
-                                iconWidth: 16; iconHeight: 16
-                                toolTip: "删除"
-                                onClicked: {
-                                    //
-                                }
-                            }
+//                            MusicIconButton {
+//                                iconSource: "qrc:/images/clear.png"
+//                                iconWidth: 16; iconHeight: 16
+//                                toolTip: "删除"
+//                                onClicked: {
+//                                    //
+//                                }
+//                            }
                         }
                     }  //end Item
 
@@ -279,7 +274,7 @@ Frame {
     Component {
         id: listViewHeader
         Rectangle {
-            color: "#00AAAA"
+            color: "#3000AAAA"
             height: 45
             width: listView.width
             RowLayout {
@@ -292,7 +287,7 @@ Frame {
                     Layout.preferredWidth: parent.width*0.05
                     font.family: window.mFONT_FAMILY
                     font.pointSize: 13
-                    color: "black"
+                    color: "#eeffffff"
                     elide: Qt.ElideRight
                 }
                 Text {
@@ -301,7 +296,7 @@ Frame {
                     Layout.preferredWidth: parent.width*0.4
                     font.family: window.mFONT_FAMILY
                     font.pointSize: 13
-                    color: "black"
+                    color: "#eeffffff"
                     elide: Qt.ElideRight
                 }
                 Text {
@@ -310,7 +305,7 @@ Frame {
                     Layout.preferredWidth: parent.width*0.15
                     font.family: window.mFONT_FAMILY
                     font.pointSize: 13
-                    color: "black"
+                    color: "#eeffffff"
                     elide: Qt.ElideRight
                 }
                 Text {
@@ -319,7 +314,7 @@ Frame {
                     Layout.preferredWidth: parent.width*0.15
                     font.family: window.mFONT_FAMILY
                     font.pointSize: 13
-                    color: "black"
+                    color: "#eeffffff"
                     elide: Qt.ElideRight
                 }
                 Text {
@@ -328,7 +323,7 @@ Frame {
                     Layout.preferredWidth: parent.width*0.15
                     font.family: window.mFONT_FAMILY
                     font.pointSize: 13
-                    color: "black"
+                    color: "#eeffffff"
                     elide: Qt.ElideRight
                 }
             }

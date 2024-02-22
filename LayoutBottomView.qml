@@ -17,6 +17,7 @@ Rectangle {
     property alias modePlay: playMode.toolTip  //播放模式
     property alias playStateSource: playIconButton.iconSource  //播放/暂停按钮
     property alias musicCoverSrc: musicCover.imgSrc  //图片信息
+    property alias ifIsFavorite: ifIsFavoriteButton.ifFavorite  //是否被收藏，同步当前播放的歌曲
 
     property var playModeSwitch: [  //播放模式提示语的数组
         { name: "顺序播放", source: "qrc:/images/repeat.png"},
@@ -27,7 +28,7 @@ Rectangle {
 
     Layout.fillWidth: true
     height: 60
-    color: "#00AAAA"
+    color: "#1500AAAA"
 
     //Layout布局(有些组件属性可能就没用)
     RowLayout {
@@ -123,7 +124,7 @@ Rectangle {
                     Rectangle {
                         width: slider.visualPosition*parent.width; height: parent.height
                         radius: 2
-                        color: "#73a7ab"
+                        color: "#8cecf3"
                     }
                 }
                 property alias handleRec: handleRec
@@ -178,12 +179,18 @@ Rectangle {
             }
         }
         MusicIconButton {
+            id: ifIsFavoriteButton
             Layout.preferredWidth: 50
             iconSource: "qrc:/images/favorite.png"
             iconWidth: 32; iconHeight: 32
             toolTip: "我喜欢"
             onClicked: {
-                ifFavorite = !ifFavorite
+                if (mainAllMusicList.length === 0) return
+
+                ifFavorite = !ifFavorite  //可以同步当前列表
+                mainAllMusicList[mainAllMusicListIndex].ifIsFavorite = !mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
+
+                MyJs.changeAndSaveFavoriteList(!mainAllMusicList[mainAllMusicListIndex].ifIsFavorite, mainAllMusicList[mainAllMusicListIndex])
             }
         }
         MusicIconButton {

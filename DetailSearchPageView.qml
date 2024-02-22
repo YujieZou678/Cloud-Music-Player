@@ -13,6 +13,10 @@ import "requestNetwork.js" as MyJs //命名首字母必须大写，否则编译�
 ColumnLayout {
 
     property alias musicListView: musicListView
+    property bool ifNeedRefreshList: false
+    function refreshList() {
+        musicListView.musicList = musicListView.musicList
+    }
 
     Layout.fillHeight: true
     Layout.fillWidth: true
@@ -29,6 +33,7 @@ ColumnLayout {
             text: qsTr("搜索音乐")
             font.family: window.mFONT_FAMILY
             font.pointSize: 25
+            color: "#eeffffff"
         }
         MouseArea{
             anchors.fill: parent
@@ -45,10 +50,11 @@ ColumnLayout {
                 family: window.mFONT_FAMILY
                 pointSize: 14
             }
+            color: "#eeffffff"
             selectByMouse: true
             selectionColor: "#999999"
             placeholderText: "王贰浪"
-            placeholderTextColor: "#999999"
+            //placeholderTextColor: "#999999"
             background: Rectangle {
                 color: "#00000000"
 //                border.width: 1

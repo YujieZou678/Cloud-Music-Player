@@ -28,6 +28,7 @@ ColumnLayout {
             text: qsTr("播放历史")
             font.family: window.mFONT_FAMILY
             font.pointSize: 25
+            color: "#eeffffff"
         }
     }
 
@@ -45,21 +46,25 @@ ColumnLayout {
 //            onClicked: {
 //            }
 //        }
+//        MusicTextButton {
+//            btnText: "刷新历史记录"
+//            btnHeight: 50
+//            btnWidth: 200
+//            onClicked: {
+//                historyListView.musicList = []
+//                mainHistoryList = []  //触发改变信号就可
+//            }
+//        }
         MusicTextButton {
-            btnText: "刷新历史记录"
-            btnHeight: 50
-            btnWidth: 200
-            onClicked: {
-                historyListView.musicList = []
-                mainHistoryList = []  //触发改变信号就可
-            }
-        }
-        MusicTextButton {
-            btnText: "清空历史缓存"
+            btnText: "清空缓存&刷新"
             btnHeight: 50
             btnWidth: 200
             onClicked: {
                 clearHistoryCache()
+                //刷新
+                historyListView.musicList = []
+                mainHistoryList = []  //触发改变信号就可
+                mainHistoryListCopy = []
             }
         }
     }
@@ -70,7 +75,7 @@ ColumnLayout {
     }
 
     Component.onCompleted: {
-        historyListView.musicList = mainHistoryList.slice().reverse()  //副本颠倒
+        historyListView.musicList = mainHistoryList.reverse()  //副本颠倒
         historyListView.songCount = mainHistoryList.length
     }
 }

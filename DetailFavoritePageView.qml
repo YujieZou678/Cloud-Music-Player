@@ -24,6 +24,7 @@ ColumnLayout {
             text: qsTr("我喜欢")
             font.family: window.mFONT_FAMILY
             font.pointSize: 25
+            color: "#eeffffff"
         }
     }
 
@@ -34,21 +35,27 @@ ColumnLayout {
             width: 10
         }
 
+//        MusicTextButton {
+//            btnText: "刷新记录"
+//            btnHeight: 50
+//            btnWidth: 200
+//            onClicked: {
+//                favoriteListView.musicList = []
+//                mainFavoriteList = []  //触发改变信号就可
+//            }
+//        }
         MusicTextButton {
-            btnText: "刷新记录"
-            btnHeight: 50
-            btnWidth: 200
-            onClicked: {
-                favoriteListView.musicList = []
-                mainFavoriteList = []  //触发改变信号就可
-            }
-        }
-        MusicTextButton {
-            btnText: "清空缓存"
+            btnText: "清空缓存&刷新"
             btnHeight: 50
             btnWidth: 200
             onClicked: {
                 clearFavoriteCache()
+                mainFavoriteList.forEach(item=>{  //把当前列表的是否收藏属性置为false
+                                             item.ifIsFavorite = false
+                                         })
+                //刷新并将列表置为空
+                favoriteListView.musicList = []
+                mainFavoriteList = []  //触发改变信号就可
             }
         }
     }
@@ -59,7 +66,7 @@ ColumnLayout {
     }
 
     Component.onCompleted: {
-        favoriteListView.musicList = mainFavoriteList.slice().reverse()  //副本颠倒
+        favoriteListView.musicList = mainFavoriteList.reverse()  //颠倒
         favoriteListView.songCount = mainFavoriteList.length
     }
 }

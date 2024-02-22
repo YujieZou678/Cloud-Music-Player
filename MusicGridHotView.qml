@@ -52,6 +52,7 @@ Item {
                         pointSize: 11
                     }
                     elide: Qt.ElideMiddle
+                    color: "#eeffffff"
                 }
 
                 MouseArea {

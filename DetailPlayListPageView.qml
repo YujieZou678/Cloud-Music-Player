@@ -46,6 +46,7 @@ ColumnLayout {
             text: qsTr(targetType==="10" ? "专辑-"+name:"歌单-"+name)
             font.family: window.mFONT_FAMILY
             font.pointSize: 25
+            color: "#eeffffff"
         }
     }
 
@@ -73,6 +74,7 @@ ColumnLayout {
                 elide: Qt.ElideRight
                 lineHeight: 1.5
                 text: "这个家伙很懒，什么都没留下......"
+                color: "#eeffffff"
             }
         }
     }  //end RowLayout

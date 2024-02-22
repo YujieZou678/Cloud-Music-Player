@@ -10,7 +10,7 @@ import QtQml
 
 RowLayout {
 
-    property int defaultIndex: 4
+    property int defaultIndex: 0
     property alias repeater: repeater
 
     //判断列表视图是否播放音乐,0:对应qmlList[5]独立 1:对应qmlList[6]独立
@@ -33,7 +33,7 @@ RowLayout {
         Layout.fillHeight: true
         padding: 0
         background: Rectangle {
-            color: "#AA00AAAA"
+            color: "#1000AAAA"
         }
 
         ColumnLayout{
@@ -61,7 +61,7 @@ RowLayout {
                 }
                 delegate: menuViewDelegate
                 highlight:Rectangle{
-                    color: "#aa73a7ab"
+                    color: "#5073a7ab"
                 }
             }
 
@@ -71,7 +71,7 @@ RowLayout {
                     id:menuViewDelegateItem
                     height: 50
                     width: 200
-                    color: "#AA00AAAA"
+                    color: "#00000000"
                     RowLayout{
                         anchors.fill: parent
                         anchors.centerIn: parent
@@ -92,7 +92,7 @@ RowLayout {
                             height:50
                             font.family: window.mFONT_FAMILY
                             font.pointSize: 12
-                            color: "#ffffff"
+                            color: "#eeffffff"
                         }
                     }  //end RowLayout
 
@@ -104,7 +104,7 @@ RowLayout {
                             color="#aa73a7ab"
                         }
                         onExited: {
-                            color="#AA00AAAA"
+                            color="#00000000"
                         }
 
                         onClicked:{
@@ -139,6 +139,7 @@ RowLayout {
                 menuView.currentIndex = defaultIndex
 
                 //后台自动加载
+                repeater.itemAt(1).source = qmlList[1].qml+".qml"
                 repeater.itemAt(2).source = qmlList[2].qml+".qml"
                 repeater.itemAt(3).source = qmlList[3].qml+".qml"
                 repeater.itemAt(4).source = qmlList[4].qml+".qml"

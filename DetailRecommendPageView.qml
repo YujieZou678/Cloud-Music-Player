@@ -32,6 +32,7 @@ ScrollView {
                 text: qsTr("推荐内容")
                 font.family: window.mFONT_FAMILY
                 font.pointSize: 25
+                color: "#eeffffff"
             }
         }
 
@@ -57,6 +58,7 @@ ScrollView {
                 text: qsTr("热门歌单")
                 font.family: window.mFONT_FAMILY
                 font.pointSize: 25
+                color: "#eeffffff"
             }
         }
 
@@ -82,6 +84,7 @@ ScrollView {
                 text: qsTr("新歌推荐")
                 font.family: window.mFONT_FAMILY
                 font.pointSize: 25
+                color: "#eeffffff"
             }
         }
 

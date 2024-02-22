@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Item {
+Rectangle {
 
     id: lyricView
 
@@ -14,14 +14,16 @@ Item {
 
     clip: true
 
+    color: "#00000000"
+
     ListView {
         id: list
         anchors.fill: parent
         model: ["暂无歌词","云坠入雾里","云坠入雾里"]
         delegate: listDelegate
-        highlight: Rectangle {
-            color: "#2073a7db"
-        }
+//        highlight: Rectangle {
+//            color: "#2073a7db"
+//        }
         highlightMoveDuration: 0
         highlightResizeDuration: 0
         currentIndex: 0
@@ -39,7 +41,7 @@ Item {
             Text {
                 text: modelData
                 anchors.centerIn: parent
-                color: index===list.currentIndex?"black":"#505050"
+                color: index===list.currentIndex?"#eeffffff":"#aaffffff"
                 font {
                     family: mFONT_FAMILY
                     pointSize: 12
@@ -54,7 +56,7 @@ Item {
             }
             MouseArea {
                 anchors.fill: parent
-                onCanceled: list.currentIndex = index
+                onClicked: list.currentIndex = index
             }
         }
     }

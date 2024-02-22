@@ -18,12 +18,14 @@ ApplicationWindow {
 
     /* 实际上主函数不需要声明，会自动加载到全部应用里 */
     property alias mediaPlayer: mediaPlayer
+    property alias mainBackground: mainBackground
     property alias layoutBottomView: layoutBottomView
     property alias pageHomeView: pageHomeView
     property alias pageDetailView: pageDetailView
 
     //用于列表播放后，切歌
     property var mainHistoryList: []   //播放历史列表
+    property var mainHistoryListCopy: []  //副本
     property bool loadCacheCause1: true  //是否是加载缓存导致
     onMainHistoryListChanged: {  //一开始自动会执行一次
         if (mainHistoryList.length === 0) {
@@ -33,17 +35,26 @@ ApplicationWindow {
                 loadCacheCause1 = false
             } else {
                 mainHistoryList = dataCache  //加载缓存
+                mainHistoryListCopy = JSON.parse(JSON.stringify(mainHistoryList))  //副本
+                replaceHistoryList()  //跟我喜欢列表做比较替换
             }
         }
         else {
             if (loadCacheCause1) { loadCacheCause1 = false; return }
-            if (mainHistoryList.length > 20) { mainHistoryList.shift() }  //限制历史列表范围，考虑复杂度!
-            saveHistoryCache(mainHistoryList)  //每播放一首歌就需要重新缓存
             var loader = pageHomeView.repeater.itemAt(3).item.historyListView  //每播放一首歌就需要改变历史视图
-            loader.musicList = mainHistoryList.slice().reverse()  //副本颠倒
+            loader.musicList = mainHistoryList.reverse()  //颠倒
             loader.songCount = mainHistoryList.length
         }
     }
+    function replaceHistoryList() {
+        for (var i in mainHistoryList) {
+            var index = MyJs.checkIsFavorite(mainHistoryList[i].id)
+            if (index !== -1) {
+                mainHistoryList[i] = mainFavoriteList[index]  //如果是收藏了的，就替换保证是同一个对象
+            }
+        }
+    }
+
     property var mainAllMusicList: []  //当前歌单/专辑列表
     onMainAllMusicListChanged: {
         //清空随机历史列表和index
@@ -71,9 +82,8 @@ ApplicationWindow {
                 }
             } else {
                 //减少到0的情况
-                saveFavoriteCache(mainFavoriteList)  //每收藏一首歌就需要缓存
                 var loader = pageHomeView.repeater.itemAt(4).item.favoriteListView  //每播放一首歌就需要改变我喜欢视图
-                loader.musicList = mainFavoriteList.slice().reverse()  //副本颠倒
+                loader.musicList = mainFavoriteList.reverse()  //颠倒
                 loader.songCount = mainFavoriteList.length
 
                 sendSignalRefreshList()
@@ -81,26 +91,29 @@ ApplicationWindow {
         }
         else {
             if (loadCacheCause2) { loadCacheCause2 = false; return }
-            if (mainFavoriteList.length > 20) { mainFavoriteList.shift() }  //限制我喜欢列表范围
-            saveFavoriteCache(mainFavoriteList)  //每收藏一首歌就需要缓存
             var loader = pageHomeView.repeater.itemAt(4).item.favoriteListView  //每播放一首歌就需要改变历史视图
-            loader.musicList = mainFavoriteList.slice().reverse()  //副本颠倒
+            loader.musicList = mainFavoriteList.reverse()  //颠倒
             loader.songCount = mainFavoriteList.length
 
             sendSignalRefreshList()
         }
     }
     function sendSignalRefreshList() {
-        pageHomeView.repeater.itemAt(2).item.ifNeedRefreshList = true
-        pageHomeView.repeater.itemAt(3).item.ifNeedRefreshList = true
-        pageHomeView.repeater.itemAt(5).item.ifNeedRefreshList = true
-        pageHomeView.repeater.itemAt(6).item.ifNeedRefreshList = true
+        pageHomeView.repeater.itemAt(1).item.ifNeedRefreshList = true  //搜索音乐
+        pageHomeView.repeater.itemAt(2).item.ifNeedRefreshList = true  //本地音乐
+        pageHomeView.repeater.itemAt(3).item.ifNeedRefreshList = true  //播放历史
+        pageHomeView.repeater.itemAt(5).item.ifNeedRefreshList = true  //专辑/歌单
+        pageHomeView.repeater.itemAt(6).item.ifNeedRefreshList = true  //专辑/歌单
     }
 
     width: mWINDOW_WIDTH
     height: mWINDOW_HEIGHT
     visible: true
     title: qsTr("Cloud Music Player")
+
+    background: Background {
+        id: mainBackground
+    }
 
     ColumnLayout {
         anchors.fill: parent

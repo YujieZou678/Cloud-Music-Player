@@ -26,6 +26,10 @@ Item {
             Layout.preferredWidth: parent.width*0.45
             Layout.fillHeight: true
 
+            background: Rectangle {
+                color: "#00000000"
+            }
+
             Text {
                 id: name
                 text: nameText
@@ -38,6 +42,7 @@ Item {
                     family: mFONT_FAMILY
                     pointSize: 16
                 }
+                color: "#eeffffff"
             }
             Text {
                 id: artist
@@ -52,6 +57,7 @@ Item {
                     family: mFONT_FAMILY
                     pointSize: 14
                 }
+                color: "#aaffffff"
             }
             MusicBorderImage {
                 id: cover
@@ -66,6 +72,9 @@ Item {
         Frame {
             Layout.preferredWidth: parent.width*0.55
             Layout.fillHeight: true
+            background: Rectangle {
+                color: "#0000AAAA"
+            }
 
             MusicLyricView {
                 id: lyricView
