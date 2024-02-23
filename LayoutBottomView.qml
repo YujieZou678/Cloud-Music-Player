@@ -188,7 +188,32 @@ Rectangle {
                 if (mainAllMusicList.length === 0) return
 
                 ifFavorite = !ifFavorite  //可以同步当前列表
+                if (mainModelName === "DetailHistoryPageView") {  //历史列表单独处理
+                    mainAllMusicList[0].ifIsFavorite = !mainAllMusicList[0].ifIsFavorite
+                    var loader = pageHomeView.repeater.itemAt(3)
+                    loader.item.refreshList()  //刷新
+                    MyJs.changeAndSaveFavoriteList(!mainAllMusicList[0].ifIsFavorite, mainAllMusicList[0])
+                    return
+                }
+
                 mainAllMusicList[mainAllMusicListIndex].ifIsFavorite = !mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
+                //当前正在播放歌曲的页面需要立刻刷新
+                switch (mainModelName) {
+                case "DetailSearchPageView":
+                    var loader = pageHomeView.repeater.itemAt(1)
+                    loader.item.refreshList()  //刷新
+                    break;
+                case "DetailPlayListPageView":
+                    var loader = []
+                    if (pageHomeView.ifPlaying === 0) { loader = pageHomeView.repeater.itemAt(5) }
+                    else if (pageHomeView.ifPlaying === 1) { loader = pageHomeView.repeater.itemAt(6) }
+                    loader.item.refreshList()  //刷新
+                    break;
+                case "DetailLocalPageView":
+                    var loader = pageHomeView.repeater.itemAt(2)
+                    loader.item.refreshList()  //刷新
+                    break;
+                }
 
                 MyJs.changeAndSaveFavoriteList(!mainAllMusicList[mainAllMusicListIndex].ifIsFavorite, mainAllMusicList[mainAllMusicListIndex])
             }

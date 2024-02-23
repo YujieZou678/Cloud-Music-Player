@@ -45,7 +45,12 @@ function postRequest(url="", handleData) {
 
 //播放音乐模板函数，参数说明：1.歌曲id 2.歌曲名字 3.作者 4.图片信息地址 5.是否被收藏
 function playMusic(targetId, name, artist, picUrl, ifIsFavorite) {
+    //防止播放同一首歌出现bug
+    mediaPlayer.pause()
+    mediaPlayer.source = ""
+
     console.log("id: "+targetId+" 正在播放音乐")
+
     //本地音乐
     var check = targetId.split(":")
     if (check[0] === "file") {
@@ -131,17 +136,17 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
 
         /* 顺序播放 */
         if (isNextSong) {  //下一首
-            mainAllMusicListIndex = (mainAllMusicListIndex + 1 + mainAllMusicList.length)%mainAllMusicList.length
+            mainAllMusicListIndex = (mainAllMusicListIndex + 1 + mainAllMusicListCopy.length)%mainAllMusicListCopy.length
         }
         else {  //上一首
-            mainAllMusicListIndex = (mainAllMusicListIndex - 1 + mainAllMusicList.length)%mainAllMusicList.length
+            mainAllMusicListIndex = (mainAllMusicListIndex - 1 + mainAllMusicListCopy.length)%mainAllMusicListCopy.length
         }
 
         //播放
-        var nextSong = mainAllMusicList[mainAllMusicListIndex]
+        var nextSong = mainAllMusicListCopy[mainAllMusicListIndex]
         var targetId = nextSong.id
         var picUrl = nextSong.picUrl
-        var ifIsFavorite = nextSong.ifIsFavorite
+        var ifIsFavorite = mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
         playMusic(targetId, nextSong.name, nextSong.artist, picUrl, ifIsFavorite)
         changeAndSaveHistoryList(nextSong)  //添加历史
 
@@ -158,27 +163,30 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
         } else if (mainModelName === "DetailLocalPageView") {
             var loader = pageHomeView.repeater.itemAt(2)
             loader.item.localListView.listView.currentIndex = mainAllMusicListIndex
+        } else if (mainModelName === "DetailFavoritePageView") {
+            var loader = pageHomeView.repeater.itemAt(4)
+            loader.item.favoriteListView.listView.currentIndex = mainAllMusicListIndex
         }
         break;
     case "随机播放":
         if (mainRandomHistoryList.length < 1) {
-            mainRandomHistoryList.push(mainAllMusicList[mainAllMusicListIndex])  //添加上一首歌
+            mainRandomHistoryList.push(mainAllMusicListCopy[mainAllMusicListIndex])  //添加上一首歌
             mainRandomHistoryListIndex = 0
         }
 
         /* 随机播放 */
         if (isNextSong) {   //下一首
             if (mainRandomHistoryListIndex === mainRandomHistoryList.length-1) {  //在随机历史列表末尾
-                var randomIndex = Math.floor(Math.random()*mainAllMusicList.length)  //歌单index为随机
+                var randomIndex = Math.floor(Math.random()*mainAllMusicListCopy.length)  //歌单index为随机
                 if (mainAllMusicListIndex === randomIndex) {  //随机可能重复
-                    mainAllMusicListIndex = (mainAllMusicListIndex+mainAllMusicList.length+1)%mainAllMusicList.length
+                    mainAllMusicListIndex = (mainAllMusicListIndex+mainAllMusicListCopy.length+1)%mainAllMusicListCopy.length
                 } else { mainAllMusicListIndex = randomIndex }
 
                 //播放
-                var nextSong = mainAllMusicList[mainAllMusicListIndex]
+                var nextSong = mainAllMusicListCopy[mainAllMusicListIndex]
                 var targetId = nextSong.id
                 var picUrl = nextSong.picUrl
-                var ifIsFavorite = nextSong.ifIsFavorite
+                var ifIsFavorite = mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
                 playMusic(targetId, nextSong.name, nextSong.artist, picUrl, ifIsFavorite)
                 changeAndSaveHistoryList(nextSong)  //添加历史
                 mainRandomHistoryList.push(nextSong)  //添加随机历史
@@ -189,31 +197,31 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
 
                 //播放
                 var nextSong = mainRandomHistoryList[mainRandomHistoryListIndex]
-                for (var i in mainAllMusicList) {  //找到歌在主列表的index，复杂度可能很高！
-                    if (mainAllMusicList[i].id === nextSong.id) {
+                for (var i in mainAllMusicListCopy) {  //找到歌在主列表的index，复杂度可能很高！
+                    if (mainAllMusicListCopy[i].id === nextSong.id) {
                         mainAllMusicListIndex = i
                         break
                     }
                 }
                 var targetId = nextSong.id
                 var picUrl = nextSong.picUrl
-                var ifIsFavorite = nextSong.ifIsFavorite
+                var ifIsFavorite = mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
                 playMusic(targetId, nextSong.name, nextSong.artist, picUrl, ifIsFavorite)
                 changeAndSaveHistoryList(nextSong)  //添加历史
             }
         }
         else {  //上一首
             if (mainRandomHistoryListIndex === 0) {  //此时依然为随机歌曲
-                var randomIndex = Math.floor(Math.random()*mainAllMusicList.length)  //歌单index为随机
+                var randomIndex = Math.floor(Math.random()*mainAllMusicListCopy.length)  //歌单index为随机
                 if (mainAllMusicListIndex === randomIndex) {  //随机可能重复
-                    mainAllMusicListIndex = (mainAllMusicListIndex+mainAllMusicList.length+1)%mainAllMusicList.length
+                    mainAllMusicListIndex = (mainAllMusicListIndex+mainAllMusicListCopy.length+1)%mainAllMusicListCopy.length
                 } else { mainAllMusicListIndex = randomIndex }
 
                 //播放
-                var nextSong = mainAllMusicList[mainAllMusicListIndex]
+                var nextSong = mainAllMusicListCopy[mainAllMusicListIndex]
                 var targetId = nextSong.id
                 var picUrl = nextSong.picUrl
-                var ifIsFavorite = nextSong.ifIsFavorite
+                var ifIsFavorite = mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
                 playMusic(targetId, nextSong.name, nextSong.artist, picUrl, ifIsFavorite)
                 changeAndSaveHistoryList(nextSong)  //添加历史
                 mainRandomHistoryList.unshift(nextSong)  //在随机历史前面添加
@@ -223,15 +231,15 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
 
                 //播放
                 var nextSong = mainRandomHistoryList[mainRandomHistoryListIndex]
-                for (var i in mainAllMusicList) {  //找到歌在主列表的index，复杂度可能很高！
-                    if (mainAllMusicList[i].id === nextSong.id) {
+                for (var i in mainAllMusicListCopy) {  //找到歌在主列表的index，复杂度可能很高！
+                    if (mainAllMusicListCopy[i].id === nextSong.id) {
                         mainAllMusicListIndex = i
                         break
                     }
                 }
                 var targetId = nextSong.id
                 var picUrl = nextSong.picUrl
-                var ifIsFavorite = nextSong.ifIsFavorite
+                var ifIsFavorite = mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
                 playMusic(targetId, nextSong.name, nextSong.artist, picUrl, ifIsFavorite)
                 changeAndSaveHistoryList(nextSong)  //添加历史
             }
@@ -250,14 +258,17 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
         } else if (mainModelName === "DetailLocalPageView") {
             var loader = pageHomeView.repeater.itemAt(2)
             loader.item.localListView.listView.currentIndex = mainAllMusicListIndex
+        } else if (mainModelName === "DetailFavoritePageView") {
+            var loader = pageHomeView.repeater.itemAt(4)
+            loader.item.localListView.listView.currentIndex = mainAllMusicListIndex
         }
         break;
     case "循环播放":
         /* 循环播放 */
-        var nextSong = mainAllMusicList[mainAllMusicListIndex]
+        var nextSong = mainAllMusicListCopy[mainAllMusicListIndex]
         var targetId = nextSong.id
         var picUrl = nextSong.picUrl
-        var ifIsFavorite = nextSong.ifIsFavorite
+        var ifIsFavorite = mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
         playMusic(targetId, nextSong.name, nextSong.artist, picUrl, ifIsFavorite)
         break;
     }
@@ -363,7 +374,7 @@ function changeAndSaveFavoriteList(ifIsFavorite, item) {
     else {
         //取消收藏
         for (var i in mainFavoriteList) {
-            if (item.id === mainFavoriteList[i]) {
+            if (item.id === mainFavoriteList[i].id) {
                 mainFavoriteList.splice(i, 1)
                 break
             }

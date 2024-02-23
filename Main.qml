@@ -61,6 +61,7 @@ ApplicationWindow {
         mainRandomHistoryList = []
         mainRandomHistoryListIndex = -1
     }
+    property var mainAllMusicListCopy: []  //当前歌单/专辑列表副本
     property int mainAllMusicListIndex: -1  //当前歌单/专辑列表的index
     property string mainModelName: ""  //播放模式
     property var mainRandomHistoryList: []  //随机模式下的历史列表

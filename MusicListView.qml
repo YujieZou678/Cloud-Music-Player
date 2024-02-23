@@ -18,7 +18,7 @@ Frame {
     property int currentPage: 0
     property int pageSize: 60
 
-    //得到当前是哪个模块加载列表，PlayList或者Search或者Local
+    //得到当前是哪个模块加载列表，PlayList或者Search或者Local或者history或者favorite
     property string modelName: ""
     //得到当前playList的id
     property string currentPlayListId: ""
@@ -148,15 +148,12 @@ Frame {
                 //双击播放音乐
                 onDoubleClicked: {
                     //播放单曲
-                    if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
-                        mediaPlayer.pause()
-                        mediaPlayer.source = ""
-                    }
                     var targetId = id
                     var picUrl_ = picUrl
                     var ifIsFavorite = musicList[index].ifIsFavorite
                     MyJs.playMusic(targetId,name,artist,picUrl_,ifIsFavorite)
                     //给主窗口播放列表赋值
+                    mainAllMusicListCopy = JSON.parse(JSON.stringify(musicList))  //赋值副本
                     mainAllMusicList = musicList
                     mainAllMusicListIndex = index
                     MyJs.changeAndSaveHistoryList(musicList[index])  //需要放到index后面，否则会有bug
@@ -225,15 +222,12 @@ Frame {
                                 onClicked: {
                                     listView.currentIndex = index
                                     //播放单曲
-                                    if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
-                                        mediaPlayer.pause()
-                                        mediaPlayer.source = ""
-                                    }
                                     var targetId = id
                                     var picUrl_ = picUrl
                                     var ifIsFavorite = musicList[index].ifIsFavorite
                                     MyJs.playMusic(targetId,name,artist,picUrl_,ifIsFavorite)
                                     //给主窗口播放列表赋值
+                                    mainAllMusicListCopy = JSON.parse(JSON.stringify(musicList))  //赋值副本
                                     mainAllMusicList = musicList
                                     mainAllMusicListIndex = index
                                     MyJs.changeAndSaveHistoryList(musicList[index])  //需要放到index后面，否则会有bug
