@@ -219,8 +219,5 @@ RowLayout {
         //靠loader为其加载的qml组件里面的赋值
         loader.item.targetType = targetType
         loader.item.targetId = targetId
-        loader.item.playListListView.imageLoadingVisible = true
-        loader.item.playListListView.listViewVisible = false
-        loader.item.playListListView.pageButtonVisible = false
     }
 }

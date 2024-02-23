@@ -24,12 +24,18 @@ ColumnLayout {
 
     //鼠标点了不同的专辑/歌单会改变
     onTargetIdChanged: {
-        playListListView.currentPage = 0
-        playListListView.scrollBar.position = 0
-        playListListView.currentPlayListId = targetId
-        //已实现异步请求
-        var url = (targetType==="10" ? "/album":"/playlist/detail")+"?id="+targetId
-        MyJs.postRequest(url, loadPlayList)
+        if (targetId !== "未知") {
+            playListListView.imageLoadingVisible = true
+            playListListView.listViewVisible = false
+            playListListView.pageButtonVisible = false
+
+            playListListView.currentPage = 0
+            playListListView.scrollBar.position = 0
+            playListListView.currentPlayListId = targetId
+            //已实现异步请求
+            var url = (targetType==="10" ? "/album":"/playlist/detail")+"?id="+targetId
+            MyJs.postRequest(url, loadPlayList)
+        }
     }
 
     Rectangle {

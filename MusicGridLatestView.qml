@@ -84,18 +84,20 @@ Item {
                         background.color = "#00000000"
                     }
                     onClicked: {
-                        //播放单曲
-                        if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
-                            mediaPlayer.pause()
-                            mediaPlayer.source = ""
-                        }
                         var item = latestList[index]
                         var targetId = item.id
-                        var name = item.name
-                        var artist = item.artist
-                        var picUrl = modelData.picUrl
-                        MyJs.playMusic(targetId,name,artist,picUrl)
-                        MyJs.addHistoryItem(item)
+                        if (targetId !== "未知") {
+                            var name = item.name
+                            var artist = item.artist
+                            var picUrl = modelData.picUrl
+                            var ifIsFavorite = modelData.ifIsFavorite
+                            MyJs.playMusic(targetId,name,artist,picUrl,ifIsFavorite)
+                            //给主窗口播放列表赋值
+                            mainAllMusicListCopy = JSON.parse(JSON.stringify(latestList))  //赋值副本
+                            mainAllMusicList = latestList
+                            mainAllMusicListIndex = index
+                            MyJs.changeAndSaveHistoryList(item)
+                        }
                     }
                 }
 

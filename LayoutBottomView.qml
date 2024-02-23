@@ -197,7 +197,7 @@ Rectangle {
                 }
 
                 mainAllMusicList[mainAllMusicListIndex].ifIsFavorite = !mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
-                //当前正在播放歌曲的页面需要立刻刷新
+                //当前正在播放歌曲的页面需要立刻刷新，历史页面一定需要刷新
                 switch (mainModelName) {
                 case "DetailSearchPageView":
                     var loader = pageHomeView.repeater.itemAt(1)
@@ -216,6 +216,10 @@ Rectangle {
                 }
 
                 MyJs.changeAndSaveFavoriteList(!mainAllMusicList[mainAllMusicListIndex].ifIsFavorite, mainAllMusicList[mainAllMusicListIndex])
+
+                //历史列表一定要刷新
+                var loader = pageHomeView.repeater.itemAt(3)
+                loader.item.refreshList()  //刷新
             }
         }
         MusicIconButton {

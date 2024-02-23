@@ -41,19 +41,34 @@ Frame {
                         var item = bannerList[index]
                         var targetId = item.id+""
                         var targetType = item.type+""
-                        var name = item.name
-                        var picUrl = item.picUrl
                         console.log(targetId, targetType, " 正在点击banner")
 
                         switch(targetType) {
                         case "1":
-                            //播放单曲
-                            if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
-                                mediaPlayer.pause()
-                                mediaPlayer.source = ""
-                            }
-                            MyJs.playMusic(targetId,name,"",picUrl)
-                            MyJs.addHistoryItem(item)
+                            //跟历史列表做替换
+                            mainHistoryList.forEach(temp=>{
+                                                        if (temp.id === item.id) {
+                                                            item = temp
+                                                            return
+                                                        }
+                                                    })
+                            //跟我喜欢列表做替换
+                            mainFavoriteList.forEach(temp=>{
+                                                        if (temp.id === item.id) {
+                                                            item = temp
+                                                            return
+                                                        }
+                                                    })
+                            var name = item.name
+                            var picUrl = item.picUrl
+                            var ifIsFavorite = item.ifIsFavorite
+                            MyJs.playMusic(targetId,name,"",picUrl,ifIsFavorite)
+                            //给主窗口播放列表赋值
+                            mainAllMusicList = []
+                            mainAllMusicList.push(item)
+                            mainAllMusicListCopy = JSON.parse(JSON.stringify(mainAllMusicList))  //赋值副本
+                            mainAllMusicListIndex = 0
+                            MyJs.changeAndSaveHistoryList(item)
                             break;
                         case "10":
                             //打开专辑

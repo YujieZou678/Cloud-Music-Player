@@ -6,6 +6,7 @@ function: 推荐内容窗口
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "requestNetwork.js" as MyJs
 
 //为了有滑轮，隐藏超出的视图
 ScrollView {
@@ -43,6 +44,17 @@ ScrollView {
             Layout.preferredHeight: (window.width - 200)*0.3
             Layout.fillHeight: true
             Layout.fillWidth: true
+            Component.onCompleted: {
+                //手动给Json数组赋值
+                var json = []
+                var oneJsonData = {
+                    "picUrl":"qrc:/images/errorLoading.png"
+                }
+                for (var i=0; i<5; i++) {
+                    json.push(oneJsonData)
+                }
+                bannerView.bannerList = json
+            }
         }
 
         Rectangle {
@@ -69,6 +81,19 @@ ScrollView {
             Layout.preferredHeight: (window.width - 200)/5*4 + 120
             Layout.fillHeight: true
             Layout.fillWidth: true
+            Component.onCompleted: {
+                //手动给Json数组赋值
+                var json = []
+                var oneJsonData = {
+                    "id": "未知",
+                    "coverImgUrl":"qrc:/images/errorLoading.png",
+                    "name":"歌单"
+                }
+                for (var i=0; i<20; i++) {
+                    json.push(oneJsonData)
+                }
+                gridHotView.hotList = json
+            }
         }
 
         Rectangle {
@@ -95,6 +120,20 @@ ScrollView {
             Layout.fillWidth: true
             Layout.preferredWidth: window.width - 200
             Layout.preferredHeight: (window.width - 200)*0.1*10
+            Component.onCompleted: {
+                //手动给Json数组赋值
+                var json = []
+                var oneJsonData = {
+                    "id": "未知",
+                    "picUrl":"qrc:/images/errorLoading.png",
+                    "name": "歌名",
+                    "artist": "作者"
+                }
+                for (var i=0; i<30; i++) {
+                    json.push(oneJsonData)
+                }
+                latestView.latestList = json
+            }
         }
     }
 
@@ -108,64 +147,25 @@ ScrollView {
     onNoData: function(modelName) {
         //判断是哪个模块发出的请求
         if (modelName === "bannerList") {
-            //手动给Json数组赋值
-            var json = []
-            var oneJsonData = {
-                "picUrl":"qrc:/images/errorLoading.png"
-            }
-            for (var i=0; i<5; i++) {
-                json.push(oneJsonData)
-            }
-            bannerView.bannerList = json
-
-            //反复请求
-            bannerRepeatRequest.start()
+            bannerRepeatRequest.start()  //反复请求
         }
         else if (modelName === "hotList") {
-            //手动给Json数组赋值
-            var json = []
-            var oneJsonData = {
-                "coverImgUrl":"qrc:/images/errorLoading.png",
-                "name":"歌单"
-            }
-            for (var i=0; i<20; i++) {
-                json.push(oneJsonData)
-            }
-            gridHotView.hotList = json
-
-            //反复请求
-            hotListRepeatRequest.start()
+            hotListRepeatRequest.start()  //反复请求
         }
         else if (modelName === "latestList") {
-            //手动给Json数组赋值
-            var json = []
-            var oneJsonData = {
-                "picUrl":"qrc:/images/errorLoading.png",
-                "name": "歌名",
-                "artist": "作者"
-            }
-            for (var i=0; i<30; i++) {
-                json.push(oneJsonData)
-            }
-            latestView.latestList = json
-
-            //反复请求
-            latestRepeatRequest.start()
+            latestRepeatRequest.start()  //反复请求
         }
     }
     onYesData: function(modelName){
         //判断是哪个模块发出的请求
         if (modelName === "bannerList") {
-            //停止反复请求
-            bannerRepeatRequest.stop()
+            bannerRepeatRequest.stop()  //停止反复请求
         }
         else if (modelName === "hotList") {
-            //停止反复请求
-            hotListRepeatRequest.stop()
+            hotListRepeatRequest.stop()  //停止反复请求
         }
         else if (modelName === "latestList") {
-            //停止反复请求
-            latestRepeatRequest.stop()
+            latestRepeatRequest.stop()  //停止反复请求
         }
     }
 
@@ -201,8 +201,10 @@ ScrollView {
                                                         id: item.targetId+"",
                                                         name: item.typeTitle,
                                                         artist: "未知",
+                                                        album: "未知",
                                                         picUrl: item.imageUrl,
-                                                        type: item.targetType
+                                                        type: item.targetType,
+                                                        ifIsFavorite: false
                                                     }
                                             })
     }
@@ -217,15 +219,32 @@ ScrollView {
     function getLatestList(data) {
         //在JS中string转JSON，得到Json数组
         var latestLists = JSON.parse(data).data
-        //赋值
-        latestView.latestList = latestLists.slice(0,30).map(item=>{
-                                                                return {
-                                                                    id: item.id+"",
-                                                                    name: item.name,
-                                                                    artist: item.artists[0].name,
-                                                                    picUrl: item.album.picUrl
-                                                                }
-                                                            })
+        //先跟播放历史做比较替换
+        var temp = latestLists.slice(0,30).map(item=>{
+                                 var index = MyJs.checkIsHistory(item.id+"")
+                                 if (index !== -1) {
+                                     return mainHistoryList[index]
+                                 }
+                                 else {
+                                     return {
+                                         id: item.id+"",
+                                         name: item.name,
+                                         artist: item.artists[0].name,
+                                         album: "未知",
+                                         picUrl: item.album.picUrl,
+                                         ifIsFavorite: false
+                                     }
+                                 }
+                              })
+
+        //再跟我喜欢做比较替换
+        latestView.latestList = temp.map(item=>{
+                                             var index = MyJs.checkIsFavorite(item.id+"")
+                                             if (index !== -1) {
+                                                 return mainFavoriteList[index]
+                                             }
+                                             else return item
+                                         })
     }
 
     //网络请求模板函数的重载
