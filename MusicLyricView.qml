@@ -44,7 +44,7 @@ Rectangle {
                 color: index===list.currentIndex?"#eeffffff":"#aaffffff"
                 font {
                     family: mFONT_FAMILY
-                    pointSize: 12
+                    pointSize: 16
                 }
             }
             states: State {

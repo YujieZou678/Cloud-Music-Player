@@ -79,6 +79,7 @@ Rectangle {
         }
         //不是具体组件，没有默认属性，宽高会伸缩
         Item {
+            visible: !layoutTopView.isSmallWindow
             Layout.preferredWidth: parent.width/2
             //可伸缩属性
             Layout.fillWidth: true
@@ -108,6 +109,7 @@ Rectangle {
                 width: parent.width
                 //一定要给显式的高，默认宽高仅在默认滑块上有
                 height: 20
+                visible: !layoutTopView.isSmallWindow
                 //MediaPlayer.position应该是0-duration，而slider.position是0-1
                 value: mediaPlayer.duration > 0 ? mediaPlayer.position / mediaPlayer.duration : 0
                 onMoved: {
@@ -161,6 +163,7 @@ Rectangle {
         MusicBorderImage {
             id: musicCover
             width: 50; height: 50
+            visible: !layoutTopView.isSmallWindow
             imgSrc: "qrc:/images/errorLoading.png"
             MouseArea {
                 anchors.fill: parent
@@ -173,8 +176,13 @@ Rectangle {
                 }
 
                 onClicked: {
+                    //视图切换
                     pageDetailView.visible = ! pageDetailView.visible
                     pageHomeView.visible = ! pageHomeView.visible
+
+                    //背景也随之切换
+                    if (mainBackground.pageViewBGState) { mainBackground.switchView(true) }
+                    else mainBackground.switchView(false)
                 }
             }
         }

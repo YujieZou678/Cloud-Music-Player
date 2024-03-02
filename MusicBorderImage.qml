@@ -12,6 +12,7 @@ Rectangle {
     property int borderRadius: 5
     property bool isRotating: false
     property real rotationAngle: 0.0
+    property alias imageLoading: imageLoading
 
     radius: borderRadius
 

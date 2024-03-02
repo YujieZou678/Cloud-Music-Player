@@ -23,7 +23,8 @@ Item {
         anchors.fill: parent
 
         Frame {
-            Layout.preferredWidth: parent.width*0.45
+            //Layout.preferredWidth: parent.width*0.45
+            Layout.fillWidth: true
             Layout.fillHeight: true
 
             background: Rectangle {
@@ -66,10 +67,29 @@ Item {
                 height: width
                 borderRadius: width
                 imgSrc: layoutBottomView.musicCoverSrc
+                imageLoading.width: 35
+                imageLoading.height: 35
+            }
+
+            Text {
+                id: lyrics
+                visible: layoutTopView.isSmallWindow
+                text: lyricView.lyrics[lyricView.current] ? lyricView.lyrics[lyricView.current]:"暂无歌词"
+                anchors {
+                    top: cover.bottom
+                    topMargin: 50
+                    horizontalCenter: parent.horizontalCenter
+                }
+                font {
+                    family: mFONT_FAMILY
+                    pointSize: 14
+                }
+                color: "#aaffffff"
             }
         }
 
         Frame {
+            visible: !layoutTopView.isSmallWindow
             Layout.preferredWidth: parent.width*0.55
             Layout.fillHeight: true
             background: Rectangle {

@@ -17,6 +17,8 @@ ToolButton {
     id: self
 
     icon.source: iconSource
+    icon.height: 22
+    icon.width: 22
 
     //提示是否可见
     ToolTip.visible: hovered

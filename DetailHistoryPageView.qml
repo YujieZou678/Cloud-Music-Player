@@ -56,7 +56,7 @@ ColumnLayout {
 //            }
 //        }
         MusicTextButton {
-            btnText: "清空缓存&刷新"
+            btnText: "清空缓存"
             btnHeight: 50
             btnWidth: 200
             onClicked: {

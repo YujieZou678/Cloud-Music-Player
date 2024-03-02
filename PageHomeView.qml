@@ -28,8 +28,12 @@ RowLayout {
 
     spacing: 0
 
-    Frame{
-        Layout.preferredWidth: 200
+    Item {
+        width: 1.5
+    }
+    Frame {
+        //Layout.preferredWidth: 200
+        Layout.preferredWidth: window.width/6 - 5
         Layout.fillHeight: true
         padding: 0
         background: Rectangle {
@@ -41,12 +45,12 @@ RowLayout {
 
             Item{
                 Layout.fillWidth: true
-                Layout.preferredHeight: 150
+                Layout.preferredHeight: window.height/16*3
                 //见MusicRoundImage.qml
                 MusicBorderImage{
                         anchors.centerIn:parent
-                        height: 100
-                        width:100
+                        height: window.height/8
+                        width: window.height/8
                         borderRadius: 100
                         imgSrc: "qrc:/images/12.png"
                     }
@@ -70,7 +74,7 @@ RowLayout {
                 Rectangle{
                     id:menuViewDelegateItem
                     height: 50
-                    width: 200
+                    width: window.width/6-5
                     color: "#00000000"
                     RowLayout{
                         anchors.fill: parent
@@ -78,6 +82,7 @@ RowLayout {
                         spacing:15
                         Item{
                             width: 30
+                            Layout.fillWidth: true
                         }
 
                         Image{
@@ -88,11 +93,15 @@ RowLayout {
 
                         Text{
                             text:value
-                            Layout.fillWidth: true
-                            height:50
+                            //Layout.fillWidth: true
+                            height: 50
                             font.family: window.mFONT_FAMILY
                             font.pointSize: 12
                             color: "#eeffffff"
+                        }
+                        Item {
+                            width: 30
+                            Layout.fillWidth: true
                         }
                     }  //end RowLayout
 
@@ -158,6 +167,9 @@ RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
+    }
+    Item {
+        width: 1.5
     }
 
     //加载PlayList视图，并赋值给视图

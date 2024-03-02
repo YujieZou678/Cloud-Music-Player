@@ -40,8 +40,8 @@ ScrollView {
         //banner
         MusicBannerView {
             id: bannerView
-            Layout.preferredWidth: window.width - 200
-            Layout.preferredHeight: (window.width - 200)*0.3
+            Layout.preferredWidth: window.width/6*5
+            Layout.preferredHeight: window.width/6*5*0.3
             Layout.fillHeight: true
             Layout.fillWidth: true
             Component.onCompleted: {
@@ -77,8 +77,8 @@ ScrollView {
         //热门歌单网格布局
         MusicGridHotView {
             id: gridHotView
-            Layout.preferredWidth: window.width - 200
-            Layout.preferredHeight: (window.width - 200)/5*4 + 120
+            Layout.preferredWidth: window.width/6*5
+            Layout.preferredHeight: window.width/6*5/5*4 + 120
             Layout.fillHeight: true
             Layout.fillWidth: true
             Component.onCompleted: {
@@ -118,8 +118,8 @@ ScrollView {
             id: latestView
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.preferredWidth: window.width - 200
-            Layout.preferredHeight: (window.width - 200)*0.1*10
+            Layout.preferredWidth: window.width/6*5
+            Layout.preferredHeight: window.width/6*5*0.1*10
             Component.onCompleted: {
                 //手动给Json数组赋值
                 var json = []

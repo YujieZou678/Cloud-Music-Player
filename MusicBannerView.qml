@@ -33,6 +33,8 @@ Frame {
             z: PathView.z ? PathView.z : 0
             scale: PathView.scale ? PathView.scale : 1
             imgSrc: modelData.picUrl
+            imageLoading.width: 30
+            imageLoading.height: 30
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor

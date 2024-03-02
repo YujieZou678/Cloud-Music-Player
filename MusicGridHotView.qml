@@ -34,6 +34,8 @@ Item {
                     width: parent.width
                     height: parent.height - 30
                     imgSrc: modelData.coverImgUrl
+                    imageLoading.width: 25
+                    imageLoading.height: 25
                 }
 
                 //歌单下的评语

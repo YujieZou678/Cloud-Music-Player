@@ -10,6 +10,7 @@ import Qt5Compat.GraphicalEffects
 Item {
     property string imgSrc: ""
     property int borderRadius: 5
+    property alias imageLoading: imageLoading
 
     Image{
         id:image

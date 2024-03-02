@@ -7,16 +7,37 @@ import QtQuick
 import Qt5Compat.GraphicalEffects
 
 Item {
-
     //逻辑：两张图片切换，实现无缝衔接。
     property alias backgroundImageSrc1: backgroundImage1.source
     property alias backgroundImageSrc2: backgroundImage2.source
 
     property bool selectImage: true  //判断选哪个image,true为1,false为2
+    property string originalImageSrc: "qrc:/images/player"  //原始的背景图片
+    property alias pageViewBGState: realBackgroundImage3.visible  //主页背景状态
+    function switchView(needLyricView = true) {  //切换背景，参数:是否需要歌词界面
+        if (!selectImage) {
+            if (needLyricView) {
+                realBackgroundImage1.visible = true
+                realBackgroundImage3.visible = false
+            } else {
+                realBackgroundImage3.visible = true
+                realBackgroundImage1.visible = false
+            }
+        }
+        else {
+            if (needLyricView) {
+                realBackgroundImage2.visible = true
+                realBackgroundImage3.visible = false
+            } else {
+                realBackgroundImage3.visible = true
+                realBackgroundImage2.visible = false
+            }
+        }
+    }
 
     Image {
         id: backgroundImage1
-        source: "qrc:/images/player"
+        source: originalImageSrc
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
         cache: true
@@ -40,7 +61,7 @@ Item {
 
     Image {
         id: backgroundImage2
-        source: "qrc:/images/player"
+        source: originalImageSrc
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
         cache: true
@@ -60,6 +81,15 @@ Item {
                 break;
             }
         }
+    }
+
+    Image {
+        id: backgroundImage3  //原始背景
+        source: originalImageSrc
+        anchors.fill: parent
+        fillMode: Image.PreserveAspectCrop
+        cache: true
+        visible: false  //不是真正的对象
     }
 
     ColorOverlay {  //颜色滤镜
@@ -92,5 +122,21 @@ Item {
         source: backgroundImageOverlay2
         radius: 80
         visible: false
+    }
+
+    ColorOverlay {
+        id: backgroundImageOverlay3
+        anchors.fill: backgroundImage3
+        source: backgroundImage3
+        color: "#35000000"
+        visible: false
+    }
+
+    FastBlur {
+        id: realBackgroundImage3
+        anchors.fill: backgroundImageOverlay3
+        source: backgroundImageOverlay3
+        radius: 80
+        visible: true
     }
 }

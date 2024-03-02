@@ -9,12 +9,25 @@ import QtQuick.Layouts
 import QtQuick.Window
 
 ToolBar {
+
+    property bool isSmallWindow: false
+
     width: parent.width
     Layout.fillWidth: true
     //ToolBar背景颜色
     background: Rectangle { color: "#00000000" }
+
     RowLayout {
         anchors.fill: parent
+        TapHandler {
+            onTapped: if (tapCount === 2) toggleMaximized()
+            gesturePolicy: TapHandler.DragThreshold
+        }
+        DragHandler {  //跟随移动
+            grabPermissions: TapHandler.CanTakeOverFromAnything
+            onActiveChanged: if (active) { window.startSystemMove() }
+        }
+
         MusicToolButton {
             iconSource: "qrc:/images/music"
             toolTip: "关于"
@@ -39,6 +52,12 @@ ToolBar {
                 exitSmallWindow.visible = true
                 maxWindow.visible = true
                 exitMaxWindow.visible = false
+
+                isSmallWindow = true
+                pageHomeView.visible = false
+                pageDetailView.visible = true
+
+                mainBackground.switchView(true)  //背景到歌词界面
             }
         }
         MusicToolButton {
@@ -50,6 +69,8 @@ ToolBar {
                 setWindowSize()
                 visible = false
                 smallWindow.visible = true
+
+                isSmallWindow = false
             }
         }
         Item {
@@ -58,7 +79,7 @@ ToolBar {
                 anchors.centerIn: parent
                 text: qsTr("云坠入雾里")
                 font.family: window.mFONT_FAMILY
-                font.pixelSize: 15
+                font.pixelSize: 16
                 color: "#ffffff"
             }
         }
@@ -66,7 +87,7 @@ ToolBar {
             iconSource: "qrc:/images/minimize-screen"
             toolTip: "最小化"
             onClicked: {
-                window.hide()
+                //window.hide()
             }
         }
         MusicToolButton {
@@ -80,6 +101,8 @@ ToolBar {
                 exitMaxWindow.visible = true
                 smallWindow.visible = true
                 exitSmallWindow.visible = false
+
+                isSmallWindow = false
             }
         }
         MusicToolButton {
@@ -175,4 +198,19 @@ ToolBar {
             }
     }
 
+    function toggleMaximized() {  //切换最大化
+        if (window.visibility === Window.Maximized) {
+            setWindowSize()
+            exitMaxWindow.visible = false
+            maxWindow.visible = true
+        } else {
+            window.visibility = Window.Maximized
+            maxWindow.visible = false
+            exitMaxWindow.visible = true
+            smallWindow.visible = true
+            exitSmallWindow.visible = false
+
+            isSmallWindow = false
+        }
+    }
 }  //end ToolBar
