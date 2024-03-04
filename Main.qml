@@ -174,6 +174,7 @@ ApplicationWindow {
         }
         LayoutTopView {
             id: layoutTopView
+            z: 1000
         }
         Item {  //占用top的空间，top隐藏不让鼠标坐标改变
             id: topItem

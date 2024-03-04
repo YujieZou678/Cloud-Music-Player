@@ -21,9 +21,15 @@ ToolButton {
     icon.width: 22
 
     //提示是否可见
-    ToolTip.visible: hovered
+    //ToolTip.visible: hovered
     //提示内容
-    ToolTip.text: toolTip
+    //ToolTip.text: toolTip
+    MusicToolTip {
+        visible: parent.hovered
+        text: toolTip
+        parentX: parent.x
+        parentY: parent.y
+    }
 
     //默认为鼠标悬浮背景变白
     background: Rectangle {

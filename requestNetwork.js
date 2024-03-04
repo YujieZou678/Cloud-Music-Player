@@ -351,7 +351,7 @@ function changeAndSaveHistoryList(item) {
     else {
         //播放的歌曲不存在于历史列表
         mainHistoryList.push(item)
-        if (mainHistoryList.length > 20) { mainHistoryList.shift() }  //限制历史列表范围，考虑复杂度!
+        if (mainHistoryList.length > 20) { mainHistoryList.shift(); mainHistoryListCopy.shift() }  //限制历史列表范围，考虑复杂度!
 
         var temp = JSON.parse(JSON.stringify(mainHistoryList))  //json对象的深拷贝
         temp[temp.length-1].ifIsFavorite = false  //改变最后一个值的属性为false

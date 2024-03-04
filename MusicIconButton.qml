@@ -25,9 +25,16 @@ Button {
     icon.height: iconHeight
 
     //提示是否可见
-    ToolTip.visible: hovered
-    //提示内容
-    ToolTip.text: toolTip
+//    ToolTip.visible: hovered
+//    //提示内容
+//    ToolTip.text: toolTip
+    MusicToolTip {
+        visible: parent.hovered
+        text: toolTip
+        parentX: parent.x
+        parentY: parent.y
+        isTop: false  //iconButton用于bottom
+    }
 
     background: Rectangle {
         color: self.down || (isCheckable && self.isChecked) ? "#497563" : "#20e9f4ff"
