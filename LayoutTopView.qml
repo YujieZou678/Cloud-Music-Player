@@ -24,7 +24,7 @@ ToolBar {
             gesturePolicy: TapHandler.DragThreshold
         }
         DragHandler {  //跟随移动
-            grabPermissions: TapHandler.CanTakeOverFromAnything
+            grabPermissions: PointerHandler.CanTakeOverFromAnything
             onActiveChanged: if (active) { window.startSystemMove() }
         }
 
@@ -87,7 +87,7 @@ ToolBar {
             iconSource: "qrc:/images/minimize-screen"
             toolTip: "最小化"
             onClicked: {
-                //window.hide()
+                window.showMinimized()
             }
         }
         MusicToolButton {

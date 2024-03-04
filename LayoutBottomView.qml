@@ -50,19 +50,19 @@ Rectangle {
         MusicIconButton {
             id: playIconButton
             Layout.preferredWidth: 50
-            iconSource: "qrc:/images/stop.png"
+            iconSource: window.mediaPlayer.playbackState===1 ? "qrc:/images/pause.png":"qrc:/images/stop.png"
             iconWidth: 32; iconHeight: 32
-            toolTip: "暂停/播放"
+            toolTip: window.mediaPlayer.playbackState===1 ? "暂停":"播放"
             onClicked: {
                 switch (window.mediaPlayer.playbackState) {
                 case MediaPlayer.PlayingState:
                     window.mediaPlayer.pause()
-                    iconSource = "qrc:/images/stop.png"
+                    //iconSource = "qrc:/images/stop.png"
                     pageDetailView.cover.isRotating = false
                     break;
                 case MediaPlayer.PausedState:
                     window.mediaPlayer.play()
-                    iconSource = "qrc:/images/pause.png"
+                    //iconSource = "qrc:/images/pause.png"
                     pageDetailView.cover.isRotating = true
                     break;
                 }
@@ -183,6 +183,9 @@ Rectangle {
                     //背景也随之切换
                     if (mainBackground.pageViewBGState) { mainBackground.switchView(true) }
                     else mainBackground.switchView(false)
+
+                    //暂停歌词视图的timer
+                    pageDetailView.timer.stop()
                 }
             }
         }

@@ -11,10 +11,12 @@ import QtQml
 Item {
     property string nameText: "云坠入雾里"
     property string artistText: "云坠入雾里"
+    property bool needStop: false  //timer是否需要暂停
 
     property alias cover: cover
     property alias lyricsList: lyricView.lyrics
     property alias current: lyricView.current
+    property alias timer: timer
 
     Layout.fillHeight: true
     Layout.fillWidth: true
@@ -29,6 +31,20 @@ Item {
 
             background: Rectangle {
                 color: "#00000000"
+            }
+
+            MouseArea {
+                id: mouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                onPositionChanged: {
+                    timer.restart()
+                    displayTopAndBottom(true)
+                }
+                onHoveredChanged: {
+                    if (needStop) { timer.stop(); needStop = false; }
+                    else needStop = true
+                }
             }
 
             Text {
@@ -84,7 +100,8 @@ Item {
                     family: mFONT_FAMILY
                     pointSize: 14
                 }
-                color: "#aaffffff"
+                //color: "#aaffffff"
+                color: "#eeffffff"
             }
         }
 
@@ -101,5 +118,25 @@ Item {
                 anchors.fill: parent
             }
         }
+    }  // RowLayout end
+
+    Timer {
+        id: timer
+        interval: 3000
+        repeat: false
+        running: false
+        onTriggered: {
+            displayTopAndBottom(false)
+        }
+    }
+
+    function displayTopAndBottom(visible = true) {
+        layoutTopView.visible = visible
+        topItem.visible = !visible
+        layoutBottomView.visible = visible
+        bottomItem.visible = !visible
+
+        if (visible) mouseArea.cursorShape = Qt.ArrowCursor
+        else mouseArea.cursorShape = Qt.BlankCursor
     }
 }

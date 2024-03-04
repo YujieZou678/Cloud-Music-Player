@@ -59,7 +59,7 @@ Frame {
         id: imageLoading
         visible: true
         source: "qrc:/images/loading.png"
-        width: 30; height: 30
+        width: 35; height: 35
         anchors.centerIn: parent
     }
     RotationAnimation {
@@ -117,7 +117,7 @@ Frame {
                 anchors.fill: parent
                 ShapePath {
                     strokeWidth: 0
-                    strokeColor: "#50000000"
+                    strokeColor: "#50ffffff"
                     strokeStyle: ShapePath.SolidLine
                     startX: 0
                     startY: listViewDelegateItem.height
@@ -358,7 +358,7 @@ Frame {
                             family: window.mFONT_FAMILY
                             pointSize: 14
                         }
-                        color: checked ? "#497563":"black"
+                        color: checked ? "#497563":"eeffffff"
                     }
                     background: Rectangle {
                         implicitHeight: 30; implicitWidth: 30

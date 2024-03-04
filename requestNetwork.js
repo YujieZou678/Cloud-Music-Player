@@ -80,7 +80,7 @@ function playMusic(targetId, name, artist, picUrl, ifIsFavorite) {
         pageDetailView.artistText = artist
     }
     layoutBottomView.timeText = getTime(window.mediaPlayer.position/1000)+"/"+getTime(window.mediaPlayer.duration/1000)
-    layoutBottomView.musicCoverSrc = picUrl
+    layoutBottomView.musicCoverSrc = picUrl ? picUrl:"qrc:/images/errorLoading.png"
     layoutBottomView.ifIsFavorite = ifIsFavorite
     if (mainBackground.selectImage) { mainBackground.backgroundImageSrc1 = picUrl; mainBackground.selectImage = false }
     else { mainBackground.backgroundImageSrc2 = picUrl; mainBackground.selectImage = true }

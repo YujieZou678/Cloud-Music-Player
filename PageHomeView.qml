@@ -81,7 +81,7 @@ RowLayout {
                         anchors.centerIn: parent
                         spacing:15
                         Item{
-                            width: 30
+                            width: 10
                             Layout.fillWidth: true
                         }
 
@@ -100,7 +100,7 @@ RowLayout {
                             color: "#eeffffff"
                         }
                         Item {
-                            width: 30
+                            width: 10
                             Layout.fillWidth: true
                         }
                     }  //end RowLayout

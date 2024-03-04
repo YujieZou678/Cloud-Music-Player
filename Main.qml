@@ -112,8 +112,12 @@ ApplicationWindow {
     visible: true
     title: qsTr("Cloud Music Player")
 
-    background: Background {
+    background: Background {  //背景
         id: mainBackground
+    }
+
+    MainSystemTrayIcon {  //托盘图标
+        id: mainSystemTrayIcon
     }
 
     flags: Qt.Window|Qt.FramelessWindowHint
@@ -171,6 +175,12 @@ ApplicationWindow {
         LayoutTopView {
             id: layoutTopView
         }
+        Item {  //占用top的空间，top隐藏不让鼠标坐标改变
+            id: topItem
+            height: layoutTopView.height
+            visible: false
+        }
+
         //中间内容
         PageHomeView {
             id: pageHomeView
@@ -184,6 +194,11 @@ ApplicationWindow {
         //底部工具栏
         LayoutBottomView {
             id: layoutBottomView
+        }
+        Item {  //同topItem
+            id: bottomItem
+            height: layoutBottomView.height
+            visible: false
         }
     }
 
