@@ -32,12 +32,12 @@ SystemTrayIcon {
                 switch (window.mediaPlayer.playbackState) {
                 case MediaPlayer.PlayingState:
                     window.mediaPlayer.pause()
-                    iconSource = "qrc:/images/stop.png"
+                    layoutBottomView.playStateSource = "qrc:/images/stop.png"
                     pageDetailView.cover.isRotating = false
                     break;
                 case MediaPlayer.PausedState:
                     window.mediaPlayer.play()
-                    iconSource = "qrc:/images/pause.png"
+                    layoutBottomView.playStateSource = "qrc:/images/pause.png"
                     pageDetailView.cover.isRotating = true
                     break;
                 }

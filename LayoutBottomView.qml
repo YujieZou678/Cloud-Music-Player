@@ -57,12 +57,12 @@ Rectangle {
                 switch (window.mediaPlayer.playbackState) {
                 case MediaPlayer.PlayingState:
                     window.mediaPlayer.pause()
-                    //iconSource = "qrc:/images/stop.png"
+                    iconSource = "qrc:/images/stop.png"
                     pageDetailView.cover.isRotating = false
                     break;
                 case MediaPlayer.PausedState:
                     window.mediaPlayer.play()
-                    //iconSource = "qrc:/images/pause.png"
+                    iconSource = "qrc:/images/pause.png"
                     pageDetailView.cover.isRotating = true
                     break;
                 }
