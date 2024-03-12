@@ -12,8 +12,8 @@ import "requestNetwork.js" as MyJs
 ApplicationWindow {
     id: window
 
-    property int mWINDOW_WIDTH: 1200
-    property int mWINDOW_HEIGHT: 800
+    property int mWINDOW_WIDTH: Screen.width/1707*1200
+    property int mWINDOW_HEIGHT: Screen.height/1067*800
     property string mFONT_FAMILY: "微软雅黑"
 
     /* 实际上主函数不需要声明，会自动加载到全部应用里 */
