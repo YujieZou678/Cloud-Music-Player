@@ -17,7 +17,6 @@ Rectangle {
     property alias modePlay: playMode.toolTip  //播放模式
     property alias playStateSource: playIconButton.iconSource  //播放/暂停按钮
     property alias musicCoverSrc: musicCover.imgSrc  //图片信息
-    property alias ifIsFavorite: ifIsFavoriteButton.ifFavorite  //是否被收藏，同步当前播放的歌曲
 
     property var playModeSwitch: [  //播放模式提示语的数组
         { name: "顺序播放", source: "qrc:/images/repeat.png"},
@@ -25,6 +24,10 @@ Rectangle {
         { name: "循环播放", source: "qrc:/images/single-repeat.png"}
     ]
     property int indexPlayMode: 0
+
+    function refreshBottomFavorite() {
+        ifIsFavoriteButton.ifFavorite = mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
+    }
 
     Layout.fillWidth: true
     height: 60

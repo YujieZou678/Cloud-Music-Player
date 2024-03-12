@@ -151,11 +151,11 @@ Frame {
                     var targetId = id
                     var picUrl_ = picUrl
                     var ifIsFavorite = musicList[index].ifIsFavorite
-                    MyJs.playMusic(targetId,name,artist,picUrl_,ifIsFavorite)
                     //给主窗口播放列表赋值
-                    mainAllMusicListCopy = JSON.parse(JSON.stringify(musicList))  //赋值副本
+                    //mainAllMusicListCopy = JSON.parse(JSON.stringify(musicList))  //赋值副本
                     mainAllMusicList = musicList
                     mainAllMusicListIndex = index
+                    MyJs.playMusic(targetId,name,artist,picUrl_,ifIsFavorite)
                     MyJs.changeAndSaveHistoryList(musicList[index])  //需要放到index后面，否则会有bug
                     mainModelName = modelName
                     //当前正在播放的歌单/专辑id赋值
@@ -225,11 +225,12 @@ Frame {
                                     var targetId = id
                                     var picUrl_ = picUrl
                                     var ifIsFavorite = musicList[index].ifIsFavorite
-                                    MyJs.playMusic(targetId,name,artist,picUrl_,ifIsFavorite)
+
                                     //给主窗口播放列表赋值
-                                    mainAllMusicListCopy = JSON.parse(JSON.stringify(musicList))  //赋值副本
+                                    //mainAllMusicListCopy = JSON.parse(JSON.stringify(musicList))  //赋值副本
                                     mainAllMusicList = musicList
                                     mainAllMusicListIndex = index
+                                    MyJs.playMusic(targetId,name,artist,picUrl_,ifIsFavorite)
                                     MyJs.changeAndSaveHistoryList(musicList[index])  //需要放到index后面，否则会有bug
                                     mainModelName = modelName
                                     //当前正在播放的歌单/专辑id赋值
@@ -246,6 +247,7 @@ Frame {
                                     musicList[index].ifIsFavorite = !musicList[index].ifIsFavorite
 
                                     MyJs.changeAndSaveFavoriteList(!musicList[index].ifIsFavorite, musicList[index])
+                                    layoutBottomView.refreshBottomFavorite()
                                 }
                             }
 //                            MusicIconButton {

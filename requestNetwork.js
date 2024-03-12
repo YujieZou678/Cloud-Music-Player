@@ -81,7 +81,7 @@ function playMusic(targetId, name, artist, picUrl, ifIsFavorite) {
     }
     layoutBottomView.timeText = getTime(window.mediaPlayer.position/1000)+"/"+getTime(window.mediaPlayer.duration/1000)
     layoutBottomView.musicCoverSrc = picUrl ? picUrl:"qrc:/images/errorLoading.png"
-    layoutBottomView.ifIsFavorite = ifIsFavorite
+    layoutBottomView.refreshBottomFavorite()
     if (mainBackground.selectImage) { mainBackground.backgroundImageSrc1 = picUrl; mainBackground.selectImage = false }
     else { mainBackground.backgroundImageSrc2 = picUrl; mainBackground.selectImage = true }
     pageDetailView.nameText = name
@@ -136,14 +136,14 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
 
         /* 顺序播放 */
         if (isNextSong) {  //下一首
-            mainAllMusicListIndex = (mainAllMusicListIndex + 1 + mainAllMusicListCopy.length)%mainAllMusicListCopy.length
+            mainAllMusicListIndex = (mainAllMusicListIndex + 1 + mainAllMusicList.length)%mainAllMusicList.length
         }
         else {  //上一首
-            mainAllMusicListIndex = (mainAllMusicListIndex - 1 + mainAllMusicListCopy.length)%mainAllMusicListCopy.length
+            mainAllMusicListIndex = (mainAllMusicListIndex - 1 + mainAllMusicList.length)%mainAllMusicList.length
         }
 
         //播放
-        var nextSong = mainAllMusicListCopy[mainAllMusicListIndex]
+        var nextSong = mainAllMusicList[mainAllMusicListIndex]
         var targetId = nextSong.id
         var picUrl = nextSong.picUrl
         var ifIsFavorite = mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
@@ -170,20 +170,20 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
         break;
     case "随机播放":
         if (mainRandomHistoryList.length < 1) {
-            mainRandomHistoryList.push(mainAllMusicListCopy[mainAllMusicListIndex])  //添加上一首歌
+            mainRandomHistoryList.push(mainAllMusicList[mainAllMusicListIndex])  //添加上一首歌
             mainRandomHistoryListIndex = 0
         }
 
         /* 随机播放 */
         if (isNextSong) {   //下一首
             if (mainRandomHistoryListIndex === mainRandomHistoryList.length-1) {  //在随机历史列表末尾
-                var randomIndex = Math.floor(Math.random()*mainAllMusicListCopy.length)  //歌单index为随机
+                var randomIndex = Math.floor(Math.random()*mainAllMusicList.length)  //歌单index为随机
                 if (mainAllMusicListIndex === randomIndex) {  //随机可能重复
-                    mainAllMusicListIndex = (mainAllMusicListIndex+mainAllMusicListCopy.length+1)%mainAllMusicListCopy.length
+                    mainAllMusicListIndex = (mainAllMusicListIndex+mainAllMusicList.length+1)%mainAllMusicList.length
                 } else { mainAllMusicListIndex = randomIndex }
 
                 //播放
-                var nextSong = mainAllMusicListCopy[mainAllMusicListIndex]
+                var nextSong = mainAllMusicList[mainAllMusicListIndex]
                 var targetId = nextSong.id
                 var picUrl = nextSong.picUrl
                 var ifIsFavorite = mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
@@ -197,8 +197,8 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
 
                 //播放
                 var nextSong = mainRandomHistoryList[mainRandomHistoryListIndex]
-                for (var i in mainAllMusicListCopy) {  //找到歌在主列表的index，复杂度可能很高！
-                    if (mainAllMusicListCopy[i].id === nextSong.id) {
+                for (var i in mainAllMusicList) {  //找到歌在主列表的index，复杂度可能很高！
+                    if (mainAllMusicList[i].id === nextSong.id) {
                         mainAllMusicListIndex = i
                         break
                     }
@@ -212,13 +212,13 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
         }
         else {  //上一首
             if (mainRandomHistoryListIndex === 0) {  //此时依然为随机歌曲
-                var randomIndex = Math.floor(Math.random()*mainAllMusicListCopy.length)  //歌单index为随机
+                var randomIndex = Math.floor(Math.random()*mainAllMusicList.length)  //歌单index为随机
                 if (mainAllMusicListIndex === randomIndex) {  //随机可能重复
-                    mainAllMusicListIndex = (mainAllMusicListIndex+mainAllMusicListCopy.length+1)%mainAllMusicListCopy.length
+                    mainAllMusicListIndex = (mainAllMusicListIndex+mainAllMusicList.length+1)%mainAllMusicList.length
                 } else { mainAllMusicListIndex = randomIndex }
 
                 //播放
-                var nextSong = mainAllMusicListCopy[mainAllMusicListIndex]
+                var nextSong = mainAllMusicList[mainAllMusicListIndex]
                 var targetId = nextSong.id
                 var picUrl = nextSong.picUrl
                 var ifIsFavorite = mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
@@ -231,8 +231,8 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
 
                 //播放
                 var nextSong = mainRandomHistoryList[mainRandomHistoryListIndex]
-                for (var i in mainAllMusicListCopy) {  //找到歌在主列表的index，复杂度可能很高！
-                    if (mainAllMusicListCopy[i].id === nextSong.id) {
+                for (var i in mainAllMusicList) {  //找到歌在主列表的index，复杂度可能很高！
+                    if (mainAllMusicList[i].id === nextSong.id) {
                         mainAllMusicListIndex = i
                         break
                     }
@@ -265,7 +265,7 @@ function switchSong(isNextSong, modePlay, ifAutoSwitch) {
         break;
     case "循环播放":
         /* 循环播放 */
-        var nextSong = mainAllMusicListCopy[mainAllMusicListIndex]
+        var nextSong = mainAllMusicList[mainAllMusicListIndex]
         var targetId = nextSong.id
         var picUrl = nextSong.picUrl
         var ifIsFavorite = mainAllMusicList[mainAllMusicListIndex].ifIsFavorite
@@ -288,7 +288,7 @@ function getFormatData(songs) {
                                      name: item.name,
                                      artist: item.ar[0].name,
                                      album: item.al.name,
-                                     picUrl: item.al.picUrl,
+                                     picUrl: item.al.picUrl===undefined ? "qrc:/images/errorLoading.png":item.al.picUrl,
                                      ifIsFavorite: false
                                  }
                              }
