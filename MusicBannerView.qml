@@ -63,13 +63,12 @@ Frame {
                                                     })
                             var name = item.name
                             var picUrl = item.picUrl
-                            var ifIsFavorite = item.ifIsFavorite
                             //给主窗口播放列表赋值
                             mainAllMusicList = []
                             mainAllMusicList.push(item)
                             //mainAllMusicListCopy = JSON.parse(JSON.stringify(mainAllMusicList))  //赋值副本
                             mainAllMusicListIndex = 0
-                            MyJs.playMusic(targetId,name,"",picUrl,ifIsFavorite)
+                            MyJs.playMusic(targetId,name,"",picUrl)
                             MyJs.changeAndSaveHistoryList(item)
                             break;
                         case "10":

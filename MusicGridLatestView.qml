@@ -90,12 +90,11 @@ Item {
                             var name = item.name
                             var artist = item.artist
                             var picUrl = modelData.picUrl
-                            var ifIsFavorite = modelData.ifIsFavorite
                             //给主窗口播放列表赋值
                             //mainAllMusicListCopy = JSON.parse(JSON.stringify(latestList))  //赋值副本
                             mainAllMusicList = latestList
                             mainAllMusicListIndex = index
-                            MyJs.playMusic(targetId,name,artist,picUrl,ifIsFavorite)
+                            MyJs.playMusic(targetId,name,artist,picUrl)
                             MyJs.changeAndSaveHistoryList(item)
                         }
                     }

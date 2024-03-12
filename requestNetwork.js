@@ -43,8 +43,8 @@ function postRequest(url="", handleData) {
     getData(url, manager)
 }
 
-//播放音乐模板函数，参数说明：1.歌曲id 2.歌曲名字 3.作者 4.图片信息地址 5.是否被收藏
-function playMusic(targetId, name, artist, picUrl, ifIsFavorite) {
+//播放音乐模板函数，参数说明：1.歌曲id 2.歌曲名字 3.作者 4.图片信息地址
+function playMusic(targetId, name, artist, picUrl) {
     //防止播放同一首歌出现bug
     mediaPlayer.pause()
     mediaPlayer.source = ""
