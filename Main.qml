@@ -264,7 +264,7 @@ ApplicationWindow {
             switch(mediaPlayer.playbackState) {
             case MediaPlayer.PlayingState:
                 mediaPlayer.pause()
-                layoutBottomView.playStateSource = "qrc:/images/stop.png"
+                layoutBottomView.playStateSource = "qrc:/images/play_ing.png"
                 pageDetailView.cover.isRotating = false
                 console.log("歌曲已暂停")
                 break;

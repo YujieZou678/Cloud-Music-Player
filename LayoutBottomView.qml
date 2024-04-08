@@ -53,14 +53,14 @@ Rectangle {
         MusicIconButton {
             id: playIconButton
             Layout.preferredWidth: 50
-            iconSource: window.mediaPlayer.playbackState===1 ? "qrc:/images/pause.png":"qrc:/images/stop.png"
+            iconSource: window.mediaPlayer.playbackState===1 ? "qrc:/images/pause.png":"qrc:/images/play_ing.png"
             iconWidth: 32; iconHeight: 32
             toolTip: window.mediaPlayer.playbackState===1 ? "暂停":"播放"
             onClicked: {
                 switch (window.mediaPlayer.playbackState) {
                 case MediaPlayer.PlayingState:
                     window.mediaPlayer.pause()
-                    iconSource = "qrc:/images/stop.png"
+                    iconSource = "qrc:/images/play_ing.png"
                     pageDetailView.cover.isRotating = false
                     break;
                 case MediaPlayer.PausedState:

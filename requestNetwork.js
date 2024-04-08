@@ -289,7 +289,8 @@ function getFormatData(songs) {
                                      artist: item.ar[0].name,
                                      album: item.al.name,
                                      picUrl: item.al.picUrl===undefined ? "qrc:/images/errorLoading.png":item.al.picUrl,
-                                     ifIsFavorite: false
+                                     ifIsFavorite: false,
+                                     mv: item.mv+""
                                  }
                              }
                           })

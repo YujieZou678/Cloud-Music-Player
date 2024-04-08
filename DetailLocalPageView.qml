@@ -91,7 +91,8 @@ ColumnLayout {
                                                artist: artist,
                                                album: "本地音乐",
                                                picUrl: "qrc:/images/errorLoading.png",
-                                               ifIsFavorite: MyJs.checkIsFavorite(id)===-1 ? false: true
+                                               ifIsFavorite: MyJs.checkIsFavorite(id)===-1 ? false: true,
+                                               mv: "0"
                                            })
                             console.log(id)
                         }
@@ -195,7 +196,8 @@ ColumnLayout {
                                        artist: artist,
                                        album: "本地音乐",
                                        picUrl: "qrc:/images/errorLoading.png",
-                                       ifIsFavorite: MyJs.checkIsFavorite(id)===-1 ? false: true
+                                       ifIsFavorite: MyJs.checkIsFavorite(id)===-1 ? false: true,
+                                       mv: "0"
                                    })
                     console.log(songsList[i])
                 }
