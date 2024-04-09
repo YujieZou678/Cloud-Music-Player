@@ -10,7 +10,7 @@ import QtQml
 
 RowLayout {
 
-    property int defaultIndex: 0
+    property int defaultIndex: 7
     property alias repeater: repeater
 
     //判断列表视图是否播放音乐,0:对应qmlList[5]独立 1:对应qmlList[6]独立
@@ -23,7 +23,8 @@ RowLayout {
         {icon:"history-white",value:"播放历史",qml:"DetailHistoryPageView",menu:true},
         {icon:"favorite-big-white",value:"我喜欢的",qml:"DetailFavoritePageView",menu:true},
         {icon:"",value:"",qml:"DetailPlayListPageView",menu:false},
-        {icon:"",value:"",qml:"DetailPlayListPageView",menu:false}
+        {icon:"",value:"",qml:"DetailPlayListPageView",menu:false},
+        {icon:"",value:"",qml:"MusicMvView",menu:false}
     ]
 
     spacing: 0

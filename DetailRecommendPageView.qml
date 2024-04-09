@@ -139,9 +139,9 @@ ScrollView {
 
     Component.onCompleted: {
         //实现异步请求,并进行相应处理
-        postRequest("/banner", getBannerList, "bannerList")
-        postRequest("/top/playlist/highquality?limit=20", getHotList, "hotList")
-        postRequest("/top/song", getLatestList, "latestList")
+//        postRequest("/banner", getBannerList, "bannerList")
+//        postRequest("/top/playlist/highquality?limit=20", getHotList, "hotList")
+//        postRequest("/top/song", getLatestList, "latestList")
     }
 
     onNoData: function(modelName) {
