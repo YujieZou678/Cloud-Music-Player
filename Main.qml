@@ -14,6 +14,10 @@ ApplicationWindow {
 
     property int mWINDOW_WIDTH: Screen.width/1707*1200
     property int mWINDOW_HEIGHT: Screen.height/1067*800
+    function restoreWindowSize() {  //还原窗口大小
+        window.width = mWINDOW_WIDTH
+        window.height = mWINDOW_HEIGHT
+    }
     property string mFONT_FAMILY: "微软雅黑"
 
     /* 实际上主函数不需要声明，会自动加载到全部应用里 */
@@ -170,17 +174,18 @@ ApplicationWindow {
         //组件之间的边距
         spacing: 0
         Item {
+            id: top1
             height: 2
         }
         LayoutTopView {
             id: layoutTopView
-            z: 1000
+            //z: 1000
         }
-        Item {  //占用top的空间，top隐藏不让鼠标坐标改变
-            id: topItem
-            height: layoutTopView.height
-            visible: false
-        }
+//        Item {  //占用top的空间，top隐藏不让鼠标坐标改变
+//            id: topItem
+//            height: layoutTopView.height
+//            visible: false
+//        }
 
         //中间内容
         PageHomeView {
@@ -196,11 +201,19 @@ ApplicationWindow {
         LayoutBottomView {
             id: layoutBottomView
         }
-        Item {  //同topItem
-            id: bottomItem
-            height: layoutBottomView.height
-            visible: false
-        }
+//        Item {  //同topItem
+//            id: bottomItem
+//            height: layoutBottomView.height
+//            visible: false
+//        }
+    }
+    function hideTopModule() {
+        top1.visible = false
+        layoutTopView.visible = false
+    }
+    function showTopModule() {
+        top1.visible = true
+        layoutTopView.visible = true
     }
 
     MediaPlayer {
@@ -261,19 +274,33 @@ ApplicationWindow {
         context: Qt.WindowShortcut
         sequence: "space"
         onActivated: {
-            switch(mediaPlayer.playbackState) {
-            case MediaPlayer.PlayingState:
-                mediaPlayer.pause()
-                layoutBottomView.playStateSource = "qrc:/images/play_ing.png"
-                pageDetailView.cover.isRotating = false
-                console.log("歌曲已暂停")
-                break;
-            case MediaPlayer.PausedState:
-                mediaPlayer.play()
-                console.log("歌曲继续播放")
-                layoutBottomView.playStateSource = "qrc:/images/pause.png"
-                pageDetailView.cover.isRotating = true
-                break;
+            /* 先判断mv视图是否显示 */
+            var loader = pageHomeView.repeater.itemAt(7)
+            if (loader.visible) {
+                switch (loader.item.mvMediaPlayer.playbackState) {
+                case MediaPlayer.PlayingState:
+                    loader.item.mvMediaPlayer.pause()
+                    break;
+                case MediaPlayer.PausedState:
+                    loader.item.mvMediaPlayer.play()
+                    break;
+                }
+            } else {
+                /* mv视图没有显示 */
+                switch(mediaPlayer.playbackState) {
+                case MediaPlayer.PlayingState:
+                    mediaPlayer.pause()
+                    layoutBottomView.playStateSource = "qrc:/images/play_ing.png"
+                    pageDetailView.cover.isRotating = false
+                    console.log("歌曲已暂停")
+                    break;
+                case MediaPlayer.PausedState:
+                    mediaPlayer.play()
+                    console.log("歌曲继续播放")
+                    layoutBottomView.playStateSource = "qrc:/images/pause.png"
+                    pageDetailView.cover.isRotating = true
+                    break;
+                }
             }
         }
     }

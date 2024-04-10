@@ -45,5 +45,6 @@
         <file>images/errorLoading.png</file>
         <file>images/play_ing.png</file>
         <file>images/标识_mv.png</file>
+        <file>images/全屏.png</file>
     </qresource>
 </RCC>

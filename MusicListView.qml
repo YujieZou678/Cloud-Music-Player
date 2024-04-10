@@ -224,11 +224,18 @@ Frame {
                                 iconWidth: 16; iconHeight: 16
                                 toolTip: "MV"
                                 visible: mv==="0" ? false:true  //如果有mv
+                                onClicked: {
+                                    mediaPlayer.pause()
+                                    layoutBottomView.playStateSource = "qrc:/images/play_ing.png"
+                                    pageDetailView.cover.isRotating = false
+                                    console.log("歌曲已暂停")
+                                    pageHomeView.showMvView(mv)
+                                }
                             }
                             Item {
                                 Layout.preferredHeight: 24
                                 Layout.preferredWidth: 24
-                                visible: mv==="0" ? true:false  //如果有mv
+                                visible: mv==="0" ? true:false  //如果没有mv
                             }
 
                             MusicIconButton {

@@ -10,7 +10,7 @@ import QtQml
 
 RowLayout {
 
-    property int defaultIndex: 7
+    property int defaultIndex: 0
     property alias repeater: repeater
 
     //判断列表视图是否播放音乐,0:对应qmlList[5]独立 1:对应qmlList[6]独立
@@ -27,12 +27,25 @@ RowLayout {
         {icon:"",value:"",qml:"MusicMvView",menu:false}
     ]
 
+    function hideOtherModule() {  //用于全屏播放mv
+        t1.visible = false
+        menuBar.visible = false
+        t2.visible = false
+    }
+    function showOtherModule() {
+        t1.visible = true
+        menuBar.visible = true
+        t2.visible = true
+    }
+
     spacing: 0
 
     Item {
+        id: t1
         width: 1.5
     }
     Frame {
+        id: menuBar
         //Layout.preferredWidth: 200
         Layout.preferredWidth: window.width/6 - 5
         Layout.fillHeight: true
@@ -121,6 +134,10 @@ RowLayout {
                             //只要点击菜单，第5和第6个.qml就不可见
                             repeater.itemAt(5).visible = false
                             repeater.itemAt(6).visible = false
+                            /* 单独处理mv视图 */
+                            repeater.itemAt(7).visible = false
+                            repeater.itemAt(7).item.mvMediaPlayer.pause()  //暂停mv
+                            repeater.itemAt(7).item.enterLoadingView()  //进入加载界面
 
                             //item.ListView.view = 该item对应的ListView
                             repeater.itemAt(menuViewDelegateItem.ListView.view.currentIndex).visible =false
@@ -155,6 +172,7 @@ RowLayout {
                 repeater.itemAt(4).source = qmlList[4].qml+".qml"
                 repeater.itemAt(5).source = qmlList[5].qml+".qml"
                 repeater.itemAt(6).source = qmlList[6].qml+".qml"
+                repeater.itemAt(7).source = qmlList[7].qml+".qml"
             }
         }  //end ColumnLayout
     }  //end Frame
@@ -170,6 +188,7 @@ RowLayout {
         }
     }
     Item {
+        id: t2
         width: 1.5
     }
 
@@ -232,5 +251,21 @@ RowLayout {
         //靠loader为其加载的qml组件里面的赋值
         loader.item.targetType = targetType
         loader.item.targetId = targetId
+    }
+
+    //显示并播放mv视图
+    function showMvView(mv) {
+        repeater.itemAt(5).visible = false
+        repeater.itemAt(6).visible = false
+        repeater.itemAt(menuView.currentIndex).visible = false
+
+        var loader = repeater.itemAt(7)
+        loader.visible=true
+        if (mv === loader.item.mvId) {  //连续点击同一个mv
+            loader.item.exitLoadingView()
+            loader.item.mvMediaPlayer.play()
+            return
+        }
+        loader.item.mvId = mv  //赋值
     }
 }
