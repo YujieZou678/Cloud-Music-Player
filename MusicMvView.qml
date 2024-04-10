@@ -69,7 +69,7 @@ Item {
 
     Timer {  //判断隐藏menuBar
         id: timer
-        interval: 3000
+        interval: 5000
         repeat: false
         running: false
         onTriggered: {
